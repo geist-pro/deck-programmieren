@@ -1,0 +1,178 @@
+# English translation overlay for cards/gdp/vl05-collections.yaml.
+# Only text fields; code, run, support, answers of predict cards and figures come from the German file.
+# Identifiers in code stay German, exactly as on the slides (Zimmer, Hotel, gaeste, preise, ...).
+lecture:
+  deck: "L05 Collections"
+  header: "GdP · L5 Collections"
+cards:
+  # ---------------------------------------------------------------- Part 1: Many objects
+  - id: gdp-vl05-001
+    front: "A hotel program has its own variable for each room (*Zimmer* = room): `z1`, `z2`, `z3`. What happens with 500 rooms?"
+    back: "**You need 500 variables and 500 output lines, and every new room changes the code.**"
+    extra: "The program works, but it does not grow. What you want is one variable that holds many rooms: a collection (array or ArrayList)."
+    source: "L5, slide 6"
+
+  - id: gdp-vl05-002
+    text: "An array has {{c1::a fixed number of slots, set when it is created}}. An `ArrayList` {{c2::grows and shrinks}}, with methods such as `add` and `remove`."
+    extra: "Both number their slots from 0. Arrays are built into the language with square brackets. `ArrayList` is a class from the Java library."
+    source: "L5, slide 7"
+
+  # ---------------------------------------------------------------- Part 2: Arrays
+  - id: gdp-vl05-003
+    prompt: "What does this program print?"
+    explanation: "`preise[1]` (*preise* = prices) was never set. A new `int` array is filled with 0. `length` is the number of slots, so 3, no matter how many of them were set."
+    source: "L5, slide 9"
+
+  - id: gdp-vl05-004
+    text: "A new `int` array is filled with {{c1::0}}, a new array of objects with {{c2::`null`}}."
+    extra: "These are the same default values as for attributes. If you already know the values, it is shorter: `int[] preise = {89, 64, 77};`"
+    source: "L5, slide 9"
+
+  - id: gdp-vl05-005
+    text: "The number of elements is `a.{{c1::length}}` for an array and `l.{{c2::size()}}` for an ArrayList."
+    extra: "`length` has no parentheses because it is not a method. `size()` is a method and needs the parentheses. `preise.length()` does not compile."
+    source: "L5, slides 9, 15, 28"
+
+  - id: gdp-vl05-006
+    prompt: "The program compiles but crashes when it runs: `java.lang.ArrayIndexOutOfBoundsException: Index 3 out of bounds for length 3`. Which index is the last valid one here, and why?"
+    answer: "**Index 2, i.e. `preise.length - 1`.** Three slots have the indices 0, 1 and 2."
+    explanation: "The compiler does not check the index, so this is a runtime error. The message names both: the wrong index and the length."
+    source: "L5, slide 11"
+
+  # ---------------------------------------------------------------- Part 3: ArrayList
+  - id: gdp-vl05-007
+    text: "`ArrayList` is in the package {{c1::`java.util`}}. The line `import java.util.ArrayList;` goes {{c2::after the `package` line, before the class}}."
+    extra: "Eclipse suggests the import as soon as you type `ArrayList`, or adds it with Ctrl+Shift+O."
+    source: "L5, slide 13"
+
+  - id: gdp-vl05-008
+    text: "In `ArrayList<String> gaeste = new ArrayList<>();` (*gaeste* = guests), `<String>` sets {{c1::the type of the elements}}. The empty `<>` on the right {{c2::take the type from the left}}."
+    extra: "Only Strings fit into this list, and the compiler checks that. The angle brackets are called generics. `new ArrayList<>()` creates a new, empty list."
+    source: "L5, slide 13"
+
+  - id: gdp-vl05-009
+    prompt: "What does this program print?"
+    explanation: "`add` appends at the end. Lists also count from 0, so index 1 is Ben, not Mia. `println` of a list shows all elements in square brackets, which helps when debugging."
+    source: "L5, slide 14"
+
+  - id: gdp-vl05-010
+    prompt: "The last line should print the last guest. What happens instead, and why?"
+    answer: "**It crashes with `IndexOutOfBoundsException`: `size()` is 3, but the last index is 2.**"
+    explanation: "`size()` counts the elements, the last index is `size() - 1`. Correct: `gaeste.get(gaeste.size() - 1)` returns Ali."
+    source: "L5, slide 15"
+
+  - id: gdp-vl05-011
+    front: "The list `gaeste` is `[Mia, Ben, Ali]`. What does it look like after `gaeste.add(1, \"Eva\");`?"
+    back: "**`[Mia, Eva, Ben, Ali]`**"
+    extra: "`add(i, x)` inserts at index i and overwrites nothing. Everything from index 1 on moves one place to the right: Ben had index 1, now index 2. Afterwards `size()` is 4."
+    source: "L5, slide 16"
+
+  - id: gdp-vl05-012
+    front: "For an `ArrayList`, what is the difference between `add(i, x)` and `set(i, x)`?"
+    back: "**`add(i, x)` inserts, the rest moves to the right. `set(i, x)` replaces the element at index i.**"
+    extra: "After `add(i, x)` the list is one longer, after `set(i, x)` `size()` stays the same. `add(0, x)` inserts at the very front."
+    source: "L5, slides 16, 20"
+
+  - id: gdp-vl05-013
+    prompt: "What does this program print?"
+    explanation: "After `add(0, \"blau\")` (blue), blau is at the front and rot (red) and grün (green) move to the right: `[blau, rot, grün]`. Index 1 is rot. `add` overwrites nothing, so the list has three elements."
+    source: "L5, slide 17"
+
+  - id: gdp-vl05-014
+    text: "`gaeste.remove(i)` removes the element at index i. Everything after it moves {{c1::one place to the left}}, and the method returns {{c2::the removed element}}."
+    extra: "With `[Mia, Eva, Ben, Ali]`, `String weg = gaeste.remove(0);` (*weg* = gone) returns Mia. After that `get(0)` is Eva, and the list has three elements."
+    source: "L5, slide 18"
+
+  - id: gdp-vl05-015
+    prompt: "What does this program print?"
+    explanation: "After `remove(1)` B is gone and the list is `[A, C, D]`. Now D has index 2, so `remove(2)` removes the D. If you count with the old indices, you get `[A, D]`."
+    source: "L5, slide 19"
+
+  - id: gdp-vl05-016
+    prompt: "Why does line 1 not compile?"
+    answer: "**Lists store only objects. For numbers you use `Integer` instead of `int`:** `ArrayList<Integer>`."
+    explanation: "`Integer` is the class for `int`, `Double` the one for `double`. Java converts automatically on `add` and `get`, so `punkte.add(10)` (*punkte* = points) stays as it is."
+    source: "L5, slide 21"
+
+  - id: gdp-vl05-017
+    prompt: "What does this program print?"
+    explanation: "`remove(1)` means index 1, so the 20, not the value 1."
+    source: "L5, slide 21"
+
+  - id: gdp-vl05-018
+    front: "In an `ArrayList<Integer> punkte`, you want to remove the **value** 20, not the element at index 20. How do you write that?"
+    back: "**`punkte.remove(Integer.valueOf(20));`**"
+    extra: "`punkte.remove(20)` would read the 20 as an index. With `Integer.valueOf(20)`, `remove` gets an object and searches for this value."
+    source: "L5, slide 21"
+
+  - id: gdp-vl05-019
+    prompt: "What does this program print?"
+    explanation: "`hotel.get(1)` returns a `Zimmer` (room) object, room 7. With a dot after it you reach its methods and attributes. Read `hotel.get(0).nummer` from left to right: the room at index 0, then its number."
+    source: "L5, slide 22"
+
+  - id: gdp-vl05-020
+    prompt: "`new Hotel().neuesZimmer(12, 89.0)` (new room) crashes. Which line is to blame, and what happens?"
+    answer: "**Line 2: `= new ArrayList<>()` is missing.** `zimmer` is `null`, there is no list at all, and the first `add` throws a `NullPointerException`."
+    explanation: "Correct: `ArrayList<Zimmer> zimmer = new ArrayList<>();`. Then every new hotel starts with an empty list."
+    source: "L5, slide 23"
+
+  # ---------------------------------------------------------------- Part 4: Going through a collection
+  - id: gdp-vl05-021
+    front: "`for (Zimmer z : hotel) { System.out.println(z.info()); }`: how do you read the head of this for-each loop, and which error cannot happen here?"
+    back: "**\"For each room `z` in `hotel`.\" There is no index, so there is no error with the bounds either.**"
+    extra: "`z` is each element of the list in turn. The loop works the same whether there are three or 500 rooms in the list."
+    source: "L5, slide 25"
+
+  - id: gdp-vl05-022
+    text: "Adding up all prices: {{c1::start at 0 before the loop}}, {{c2::add inside the loop}}, {{c3::print after the loop}}."
+    extra: "Before: `double summe = 0;` (*summe* = sum), in the loop: `summe = summe + z.preisProNacht;`, after: `System.out.println(\"Summe: \" + summe);`. The table for this is called a trace table: the value of each variable for each pass."
+    source: "L5, slide 26"
+
+  - id: gdp-vl05-023
+    prompt: "The list `hotel` contains rooms 12 (89.0), 7 (64.5) and 23 (77.0). Expected is \"Summe: 230.5\". What comes out, and which line is wrong?"
+    answer: "**\"Summe: 77.0\". Line 3 resets `summe` to 0 in every pass.**"
+    explanation: "At the end only the last price is left. The 0 belongs once before the loop; inside the loop you only add."
+    source: "L5, slide 26"
+
+  - id: gdp-vl05-024
+    prompt: "The loop should print all rooms in `hotel` (three of them), numbered. What happens, and which character is wrong?"
+    answer: "**After three lines it crashes with `IndexOutOfBoundsException`: `<=` must be `<`.**"
+    explanation: "`i` may only run from 0 to `size() - 1`. With \"less than or equal\", the loop reaches `get(3)`."
+    source: "L5, slide 27"
+
+  # ---------------------------------------------------------------- Array or ArrayList?
+  - id: gdp-vl05-025
+    front: "A restaurant stores the orders of one evening in the order they come in. Array or `ArrayList`, and why?"
+    back: "**`ArrayList`: the number is not known in advance, and `add` appends in the order they come in.**"
+    extra: "Rule of thumb: if in doubt, ArrayList. Use an array when the number is fixed, e.g. the opening hours for the 7 days of the week: `int[] stunden = new int[7];` (*stunden* = hours)"
+    source: "L5, slides 28, 30"
+
+  - id: gdp-vl05-026
+    front: "What can an array store that an `ArrayList` cannot store directly?"
+    back: "**Values of primitive types such as `int` and `double`.** An ArrayList stores only objects."
+    extra: "`int[] preise` works, `ArrayList<int>` does not. For the list you use `ArrayList<Integer>` or `ArrayList<Double>`."
+    source: "L5, slides 21, 28"
+
+  - id: gdp-vl05-027
+    front: "Why can inserting or removing in the middle of a very long `ArrayList` take time?"
+    back: "**All elements after it get moved.**"
+    extra: "Reading by index is fast for both array and ArrayList. For the list sizes in this course it does not matter."
+    source: "L5, slide 28"
+
+  - id: gdp-vl05-028
+    front: "AI code often has `List<String> gaeste = new ArrayList<>();`. Compared with `ArrayList<String>` on the left, what changes when you use the list?"
+    back: "**Nothing: `add`, `get`, `size` and `remove` work the same.**"
+    extra: "`List` describes what a list can do, `ArrayList` is one implementation of it. You also need `import java.util.List;`."
+    source: "L5, slide 29"
+
+  - id: gdp-vl05-029
+    front: "What is the problem with `ArrayList liste = new ArrayList();` without a type in angle brackets?"
+    back: "**Anything fits in, e.g. a String and a number. The compiler only warns; errors show up at runtime.**"
+    extra: "Such raw types date from Java before 2004 and still appear in old examples online. Eclipse underlines them in yellow. Always write the type: `ArrayList<String>`."
+    source: "L5, slide 29"
+
+  - id: gdp-vl05-030
+    front: "`ArrayList<Zimmer> hotel`: what do you have to do to add a fourth room, compared with three separate variables `z1`, `z2`, `z3`?"
+    back: "**One line: `hotel.add(new Zimmer(...));`.** No new variable name, no new output line."
+    extra: "With separate variables you would need `z4` and another `println` line. A for-each loop prints all rooms, however many there are."
+    source: "L5, slides 22, 25"

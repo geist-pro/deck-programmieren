@@ -1,0 +1,83 @@
+# English translation overlay for cards/gdp/vl04-wiederholung.yaml.
+# Only text fields; code, run, answers of predict cards and figures come from the German file.
+# Identifiers in code stay German, exactly as on the slides (Film, laenge, Filmabend, ...).
+lecture:
+  deck: "L04 Review"
+  header: "GdP · L4 Review"
+cards:
+  - id: gdp-vl04-001
+    prompt: "Celsius to Fahrenheit (F = 9/5 · C + 32). What does this program print?"
+    explanation: "From the left: `9 / 5` is two `int`, so 1. Then 1 · 10 = 10, plus 32 = 42. With `9.0 / 5 * c + 32` you would get 50.0."
+    source: "L4, slide 7"
+  - id: gdp-vl04-002
+    text: "Evaluating a suspicious expression on paper: first {{c1::substitute the values}}, then compute {{c2::from left to right}}, with multiplication and division before addition and subtraction."
+    extra: "At every division, check: are both sides `int`? Then the remainder is dropped."
+    source: "L4, slide 7"
+  - id: gdp-vl04-003
+    prompt: "Fill in the two operators so that the film length (*laenge*) is printed in hours and minutes (*stunden*, *minuten*)."
+    explanation: "Integer division gives the full hours, `%` the remainder. Check: 1 · 60 + 35 = 95. The same pattern splits cents into euros and cents, or seconds into minutes."
+    source: "L4, slide 8"
+  - id: gdp-vl04-004
+    prompt: "What does this program print?"
+    explanation: "Java computes from the left: `\"Gäste: \" + 2` (guests) is already a String, and the 3 is appended to it. With parentheses, `\"Gäste: \" + (2 + 3)`, you would get `Gäste: 5`."
+    source: "L4, slides 28, 35"
+  - id: gdp-vl04-005
+    prompt: "4 of 120 cinema seats are taken (*belegt* = taken, *plaetze* = seats). The occupancy in percent should be printed, but 0 appears. Why?"
+    answer: "**`belegt / plaetze` is an integer division: 4 / 120 gives 0, and 0 · 100 stays 0.**"
+    explanation: "Correct: `belegt * 100.0 / plaetze`, which gives about 3.33. Multiply first, and a `double` must be involved before you divide."
+    source: "L4, slide 10"
+  - id: gdp-vl04-006
+    prompt: "Why does line 1 not compile?"
+    answer: "**Comma instead of point.** In Java the decimal separator is a point: `9.50`."
+    explanation: "A typical beginner mistake, especially out of German habit, where the decimal separator is a comma."
+    source: "L4, slide 10"
+  - id: gdp-vl04-007
+    front: "`String laenge = \"141 Minuten\";` looks good in the output. Why is `int laenge = 141;` still better?"
+    back: "**With `int` you can compute (`laenge + 15` gives 156), with the text you can't.**"
+    extra: "Choose the type by how it will be used later: compute, compare or only display? You build the text only when printing. Likewise `boolean in3D = true;` instead of `\"ja\"` (yes)."
+    source: "L4, slide 6"
+  - id: gdp-vl04-008
+    prompt: "After how many minutes is half-time (*halbzeit*)? What does this program print?"
+    explanation: "`a.laenge` is an `int`, 2 as well: 141 / 2 gives 70, the remainder is dropped. Only after that does 70 become 70.0 in the `double`. Correct: `a.laenge / 2.0` gives 70.5."
+    source: "L4, slides 7, 12, 29"
+  - id: gdp-vl04-009
+    prompt: "Why does line 9 not compile?"
+    answer: "**Because of `void`, `Film(...)` in line 3 is not a constructor but an ordinary method.** So there is no constructor that takes a String."
+    explanation: "A constructor has exactly the same name as the class and has no return type, not even `void`. Correct: `public Film(String titel)`."
+    source: "L4, slide 13"
+  - id: gdp-vl04-010
+    prompt: "What does this program print?"
+    explanation: "The method (*laengeMitWerbung* = length with ads) computes 161 and returns it, but does not change the attribute. Because nobody stores the return value, the 161 is lost. Correct: `int gesamt = f.laengeMitWerbung(20);`."
+    source: "L4, slides 16, 18"
+  - id: gdp-vl04-011
+    prompt: "What does `main` print?"
+    explanation: "`mitWerbung(100)` returns 120, but nobody stores or prints it. Inside, `mitWerbung(95)` = 115 is computed first, then `mitWerbung(115)` = 135. Only `println` prints anything."
+    source: "L4, slides 18, 32, 37"
+  - id: gdp-vl04-012
+    prompt: "Why does line 2 not compile?"
+    answer: "**`ausgeben()` (print out) is `void` and returns no value that `println` could print.**"
+    explanation: "Either just call `f.ausgeben();`, or use the method with a return value: `System.out.println(f.info());`. If you want to process the value further, you need `return`, not `println`."
+    source: "L4, slides 17–18"
+  - id: gdp-vl04-013
+    prompt: "What does `main` print?"
+    explanation: "Java always copies. For the number, it copies the number: the method (*verlaengere* = lengthen) changes only its copy. For the film, it copies the reference: both copies point to the same object, so its length becomes 151."
+    source: "L4, slide 20"
+  - id: gdp-vl04-014
+    prompt: "Why does line 3 crash?"
+    answer: "**`gesamtLaenge()` (total length) reads `this.zweiter.laenge`, but `zweiter` (second) is `null`: `NullPointerException`.**"
+    explanation: "`this.zweiter` is a film, `this.zweiter.laenge` its length. If the film does not exist, there is no length either."
+    source: "L4, slide 21"
+  - id: gdp-vl04-015
+    front: "Eclipse: why do you rename a badly named variable (`a` → `titel`) with Refactor › Rename and not with find and replace?"
+    back: "**Rename changes only this one variable, everywhere it is used.** Find and replace hits every `a` in the text."
+    extra: "More shortcuts: `sysout` + Ctrl+Space writes `System.out.println()`; Ctrl+Shift+F formats the code (missing braces then show up in the indentation)."
+    source: "L4, slides 9, 23"
+  - id: gdp-vl04-016
+    prompt: "`inMinuten` (in minutes) is a `static` method of the class `Rechner` (calculator). Complete the call in `main` (without `new`)."
+    explanation: "A class method belongs to the class, no object needed. Call: `ClassName.method(…)`. Good for calculations that don't need an object."
+    source: "L4, slide 19"
+  - id: gdp-vl04-017
+    front: "The file `Kino.java` contains `public class kino { … }`. What happens, and why?"
+    back: "**The compiler reports an error: a public class must have exactly the same name as its file, including upper and lower case.**"
+    extra: "Correct: `public class Kino` in `Kino.java`. Class names start with a capital letter."
+    source: "L4, slide 10"

@@ -1,0 +1,423 @@
+lecture:
+  id: gdp-vl05
+  deck: "VL 05 Collections"
+  header: "GdP · VL 5 Collections"
+  lang: de
+  support: |
+    class Zimmer {
+        int nummer;
+        double preisProNacht;
+
+        Zimmer(int nummer, double preisProNacht) {
+            this.nummer = nummer;
+            this.preisProNacht = preisProNacht;
+        }
+
+        String info() {
+            return "Zimmer " + this.nummer + ", " + this.preisProNacht + " Euro";
+        }
+    }
+cards:
+  # ---------------------------------------------------------------- Teil 1: Viele Objekte
+  - id: gdp-vl05-001
+    type: basic
+    front: "Ein Hotelprogramm hat für jedes Zimmer eine eigene Variable: `z1`, `z2`, `z3`. Was passiert bei 500 Zimmern?"
+    back: "**Man braucht 500 Variablen und 500 Ausgabezeilen, und jedes neue Zimmer ändert den Code.**"
+    extra: "Das Programm funktioniert, wächst aber nicht mit. Gesucht ist eine Variable, die viele Zimmer enthält: eine Sammlung (Array oder ArrayList)."
+    source: "VL 5, Folie 6"
+    tags: [warum]
+
+  - id: gdp-vl05-002
+    type: cloze
+    text: "Ein Array hat {{c1::eine feste Anzahl Plätze, die beim Anlegen festgelegt wird}}. Eine `ArrayList` {{c2::wächst und schrumpft}}, mit Methoden wie `add` und `remove`."
+    extra: "Beide nummerieren ihre Plätze ab 0. Arrays sind mit eckigen Klammern in die Sprache eingebaut, `ArrayList` ist eine Klasse aus der Java-Bibliothek."
+    source: "VL 5, Folie 7"
+
+  # ---------------------------------------------------------------- Teil 2: Arrays
+  - id: gdp-vl05-003
+    type: code
+    kind: predict
+    prompt: "Was gibt dieses Programm aus?"
+    code: |
+      int[] preise = new int[3];
+      preise[0] = 89;
+      preise[2] = 77;
+      System.out.println(preise[1]);
+      System.out.println(preise.length);
+    answer: |
+      0
+      3
+    explanation: "`preise[1]` wurde nie gesetzt. Ein neues `int`-Array ist mit 0 gefüllt. `length` ist die Anzahl der Plätze, also 3, egal wie viele davon gesetzt wurden."
+    source: "VL 5, Folie 9"
+
+  - id: gdp-vl05-004
+    type: cloze
+    text: "Ein neues `int`-Array ist mit {{c1::0}} gefüllt, ein neues Array von Objekten mit {{c2::`null`}}."
+    extra: "Das sind dieselben Default-Werte wie bei Attributen. Kennt man die Werte schon, geht es kürzer: `int[] preise = {89, 64, 77};`"
+    source: "VL 5, Folie 9"
+
+  - id: gdp-vl05-005
+    type: cloze
+    text: "Die Anzahl der Elemente heißt beim Array `a.{{c1::length}}`, bei der ArrayList `l.{{c2::size()}}`."
+    extra: "`length` hat keine Klammern, weil es keine Methode ist. `size()` ist eine Methode und braucht die Klammern. `preise.length()` kompiliert nicht."
+    figure_back: "gdp-vl05-005.png"
+    source: "VL 5, Folie 9, 15, 28"
+
+  - id: gdp-vl05-006
+    type: code
+    kind: error
+    prompt: "Das Programm kompiliert, stürzt beim Ausführen aber ab: `java.lang.ArrayIndexOutOfBoundsException: Index 3 out of bounds for length 3`. Welcher Index ist hier der letzte gültige, und warum?"
+    code: |
+      int[] preise = {89, 64, 77};
+      System.out.println(preise[3]);
+    expect: runtime_error
+    error_contains: "Index 3 out of bounds for length 3"
+    answer: "**Index 2, also `preise.length - 1`.** Drei Plätze haben die Indizes 0, 1 und 2."
+    explanation: "Der Compiler prüft den Index nicht, deshalb ist es ein Laufzeitfehler. Die Meldung nennt beides: den falschen Index und die Länge."
+    source: "VL 5, Folie 11"
+
+  # ---------------------------------------------------------------- Teil 3: ArrayList
+  - id: gdp-vl05-007
+    type: cloze
+    text: "`ArrayList` liegt im Paket {{c1::`java.util`}}. Die Zeile `import java.util.ArrayList;` steht {{c2::nach der `package`-Zeile, vor der Klasse}}."
+    extra: "Eclipse schlägt den Import vor, sobald man `ArrayList` tippt, oder ergänzt ihn mit Strg+Umschalt+O."
+    source: "VL 5, Folie 13"
+
+  - id: gdp-vl05-008
+    type: cloze
+    text: "In `ArrayList<String> gaeste = new ArrayList<>();` legt `<String>` {{c1::den Typ der Elemente}} fest. Die leeren `<>` rechts {{c2::übernehmen den Typ von links}}."
+    extra: "In diese Liste passen nur Strings, und der Compiler prüft das. Die spitzen Klammern heißen Generics. `new ArrayList<>()` erzeugt eine neue, leere Liste."
+    source: "VL 5, Folie 13"
+
+  - id: gdp-vl05-009
+    type: code
+    kind: predict
+    prompt: "Was gibt dieses Programm aus?"
+    code: |
+      ArrayList<String> gaeste = new ArrayList<>();
+      gaeste.add("Mia");
+      gaeste.add("Ben");
+      gaeste.add("Ali");
+      System.out.println(gaeste.size());
+      System.out.println(gaeste.get(1));
+      System.out.println(gaeste);
+    run: |
+      import java.util.ArrayList;
+      public class Main {
+          public static void main(String[] args) {
+      {code}
+          }
+      }
+    answer: |
+      3
+      Ben
+      [Mia, Ben, Ali]
+    explanation: "`add` hängt hinten an. Auch Listen zählen ab 0, Index 1 ist also Ben, nicht Mia. `println` einer Liste zeigt alle Elemente in eckigen Klammern, praktisch bei der Fehlersuche."
+    source: "VL 5, Folie 14"
+
+  - id: gdp-vl05-010
+    type: code
+    kind: bug
+    prompt: "Die letzte Zeile soll den letzten Gast ausgeben. Was passiert stattdessen, und warum?"
+    code: |
+      ArrayList<String> gaeste = new ArrayList<>();
+      gaeste.add("Mia");
+      gaeste.add("Ben");
+      gaeste.add("Ali");
+      System.out.println(gaeste.get(gaeste.size()));
+    run: |
+      import java.util.ArrayList;
+      public class Main {
+          public static void main(String[] args) {
+      {code}
+          }
+      }
+    expect: runtime_error
+    error_contains: "IndexOutOfBoundsException"
+    answer: "**Absturz mit `IndexOutOfBoundsException`: `size()` ist 3, der letzte Index ist aber 2.**"
+    explanation: "`size()` zählt die Elemente, der letzte Index ist `size() - 1`. Richtig: `gaeste.get(gaeste.size() - 1)` liefert Ali."
+    source: "VL 5, Folie 15"
+
+  - id: gdp-vl05-011
+    type: basic
+    front: "Die Liste `gaeste` ist `[Mia, Ben, Ali]`. Wie sieht sie nach `gaeste.add(1, \"Eva\");` aus?"
+    back: "**`[Mia, Eva, Ben, Ali]`**"
+    extra: "`add(i, x)` fügt bei Index i ein und überschreibt nichts. Alles ab Index 1 rutscht eine Stelle nach rechts: Ben hatte Index 1, jetzt Index 2. `size()` ist danach 4."
+    figure_back: "gdp-vl05-011.png"
+    source: "VL 5, Folie 16"
+
+  - id: gdp-vl05-012
+    type: basic
+    front: "Was ist bei einer `ArrayList` der Unterschied zwischen `add(i, x)` und `set(i, x)`?"
+    back: "**`add(i, x)` fügt ein, der Rest rutscht nach rechts. `set(i, x)` ersetzt das Element bei Index i.**"
+    extra: "Nach `add(i, x)` ist die Liste um eins länger, nach `set(i, x)` bleibt `size()` gleich. `add(0, x)` fügt ganz vorne ein."
+    source: "VL 5, Folie 16, 20"
+
+  - id: gdp-vl05-013
+    type: code
+    kind: predict
+    prompt: "Was gibt dieses Programm aus?"
+    code: |
+      ArrayList<String> l = new ArrayList<>();
+      l.add("rot");
+      l.add("grün");
+      l.add(0, "blau");
+      System.out.println(l.get(1));
+      System.out.println(l.size());
+    run: |
+      import java.util.ArrayList;
+      public class Main {
+          public static void main(String[] args) {
+      {code}
+          }
+      }
+    answer: |
+      rot
+      3
+    explanation: "Nach `add(0, \"blau\")` steht blau vorne, rot und grün rutschen nach rechts: `[blau, rot, grün]`. Index 1 ist rot. `add` überschreibt nichts, also hat die Liste drei Elemente."
+    source: "VL 5, Folie 17"
+
+  - id: gdp-vl05-014
+    type: cloze
+    text: "`gaeste.remove(i)` entfernt das Element bei Index i. Alles dahinter rutscht {{c1::eine Stelle nach links}}, und die Methode gibt {{c2::das entfernte Element}} zurück."
+    extra: "Bei `[Mia, Eva, Ben, Ali]` liefert `String weg = gaeste.remove(0);` Mia. Danach ist `get(0)` Eva, und die Liste hat drei Elemente."
+    figure_back: "gdp-vl05-014.png"
+    source: "VL 5, Folie 18"
+
+  - id: gdp-vl05-015
+    type: code
+    kind: predict
+    prompt: "Was gibt dieses Programm aus?"
+    code: |
+      ArrayList<String> l = new ArrayList<>();
+      l.add("A");
+      l.add("B");
+      l.add("C");
+      l.add("D");
+      l.remove(1);
+      l.remove(2);
+      System.out.println(l);
+    run: |
+      import java.util.ArrayList;
+      public class Main {
+          public static void main(String[] args) {
+      {code}
+          }
+      }
+    answer: "[A, C]"
+    explanation: "Nach `remove(1)` ist B weg, die Liste ist `[A, C, D]`. Jetzt hat D den Index 2, also entfernt `remove(2)` das D. Wer mit den alten Indizes rechnet, kommt auf `[A, D]`."
+    source: "VL 5, Folie 19"
+
+  - id: gdp-vl05-016
+    type: code
+    kind: bug
+    prompt: "Warum kompiliert Zeile 1 nicht?"
+    code: |
+      ArrayList<int> punkte = new ArrayList<>();
+      punkte.add(10);
+      punkte.add(20);
+    run: |
+      import java.util.ArrayList;
+      public class Main {
+          public static void main(String[] args) {
+      {code}
+          }
+      }
+    expect: compile_error
+    error_contains: "unexpected type"
+    answer: "**Listen speichern nur Objekte. Für Zahlen nimmt man `Integer` statt `int`:** `ArrayList<Integer>`."
+    explanation: "`Integer` ist die Klasse zu `int`, `Double` die zu `double`. Bei `add` und `get` wandelt Java automatisch um, `punkte.add(10)` bleibt also so stehen."
+    source: "VL 5, Folie 21"
+
+  - id: gdp-vl05-017
+    type: code
+    kind: predict
+    prompt: "Was gibt dieses Programm aus?"
+    code: |
+      ArrayList<Integer> punkte = new ArrayList<>();
+      punkte.add(10);
+      punkte.add(20);
+      punkte.add(30);
+      punkte.remove(1);
+      System.out.println(punkte);
+    run: |
+      import java.util.ArrayList;
+      public class Main {
+          public static void main(String[] args) {
+      {code}
+          }
+      }
+    answer: "[10, 30]"
+    explanation: "`remove(1)` meint den Index 1, also die 20, nicht den Wert 1."
+    source: "VL 5, Folie 21"
+
+  - id: gdp-vl05-018
+    type: basic
+    front: "In einer `ArrayList<Integer> punkte` soll der **Wert** 20 entfernt werden, nicht das Element bei Index 20. Wie schreibt man das?"
+    back: "**`punkte.remove(Integer.valueOf(20));`**"
+    extra: "`punkte.remove(20)` würde die 20 als Index lesen. Mit `Integer.valueOf(20)` bekommt `remove` ein Objekt und sucht diesen Wert."
+    source: "VL 5, Folie 21"
+
+  - id: gdp-vl05-019
+    type: code
+    kind: predict
+    prompt: "Was gibt dieses Programm aus?"
+    code: |
+      // Zimmer: info() liefert "Zimmer " + nummer + ", " + preisProNacht + " Euro"
+      ArrayList<Zimmer> hotel = new ArrayList<>();
+      hotel.add(new Zimmer(12, 89.0));
+      hotel.add(new Zimmer(7, 64.5));
+      hotel.add(new Zimmer(23, 77.0));
+      System.out.println(hotel.get(1).info());
+      System.out.println(hotel.get(0).nummer);
+    run: |
+      import java.util.ArrayList;
+      public class Main {
+          public static void main(String[] args) {
+      {code}
+          }
+      }
+    answer: |
+      Zimmer 7, 64.5 Euro
+      12
+    explanation: "`hotel.get(1)` liefert ein Zimmer-Objekt, das Zimmer 7. Mit dem Punkt dahinter erreicht man seine Methoden und Attribute. `hotel.get(0).nummer` liest man von links nach rechts: das Zimmer bei Index 0, davon die Nummer."
+    source: "VL 5, Folie 22"
+
+  - id: gdp-vl05-020
+    type: code
+    kind: bug
+    prompt: "`new Hotel().neuesZimmer(12, 89.0)` stürzt ab. Welche Zeile ist schuld, und was passiert?"
+    code: |
+      class Hotel {
+          ArrayList<Zimmer> zimmer;
+
+          void neuesZimmer(int nr, double preis) {
+              zimmer.add(new Zimmer(nr, preis));
+          }
+      }
+    run: |
+      import java.util.ArrayList;
+      public class Main {
+          public static void main(String[] args) {
+              new Hotel().neuesZimmer(12, 89.0);
+          }
+      }
+      {code}
+    expect: runtime_error
+    error_contains: "NullPointerException"
+    answer: "**Zeile 2: `= new ArrayList<>()` fehlt.** `zimmer` ist `null`, es gibt gar keine Liste, und das erste `add` wirft eine `NullPointerException`."
+    explanation: "Richtig: `ArrayList<Zimmer> zimmer = new ArrayList<>();`. Damit startet jedes neue Hotel mit einer leeren Liste."
+    source: "VL 5, Folie 23"
+
+  # ---------------------------------------------------------------- Teil 4: Durchlaufen
+  - id: gdp-vl05-021
+    type: basic
+    front: "`for (Zimmer z : hotel) { System.out.println(z.info()); }`: Wie liest man den Kopf dieser for-each-Schleife, und welcher Fehler kann hier nicht passieren?"
+    back: "**„Für jedes Zimmer `z` in `hotel`.“ Es gibt keinen Index, also auch keinen Fehler mit den Grenzen.**"
+    extra: "`z` ist nacheinander jedes Element der Liste. Die Schleife funktioniert gleich, egal ob drei oder 500 Zimmer in der Liste sind."
+    source: "VL 5, Folie 25"
+
+  - id: gdp-vl05-022
+    type: cloze
+    text: "Alle Preise zusammenzählen: {{c1::vor der Schleife mit 0 anfangen}}, {{c2::in der Schleife addieren}}, {{c3::nach der Schleife ausgeben}}."
+    extra: "Vorher `double summe = 0;`, in der Schleife `summe = summe + z.preisProNacht;`, danach `System.out.println(\"Summe: \" + summe);`. Die Tabelle dazu heißt Trace-Tabelle: pro Durchlauf der Wert jeder Variablen."
+    figure_back: "gdp-vl05-022.png"
+    source: "VL 5, Folie 26"
+
+  - id: gdp-vl05-023
+    type: code
+    kind: bug
+    prompt: "Die Liste `hotel` enthält die Zimmer 12 (89.0), 7 (64.5) und 23 (77.0). Erwartet ist „Summe: 230.5“. Was kommt heraus, und welche Zeile ist falsch?"
+    code: |
+      double summe = 0;
+      for (Zimmer z : hotel) {
+          summe = 0;
+          summe = summe + z.preisProNacht;
+      }
+      System.out.println("Summe: " + summe);
+    run: |
+      import java.util.ArrayList;
+      public class Main {
+          public static void main(String[] args) {
+              ArrayList<Zimmer> hotel = new ArrayList<>();
+              hotel.add(new Zimmer(12, 89.0));
+              hotel.add(new Zimmer(7, 64.5));
+              hotel.add(new Zimmer(23, 77.0));
+      {code}
+          }
+      }
+    expect: wrong_output
+    wrong_output: "Summe: 77.0"
+    answer: "**„Summe: 77.0“. Zeile 3 setzt `summe` in jedem Durchlauf auf 0 zurück.**"
+    explanation: "Am Ende bleibt nur der letzte Preis übrig. Die 0 gehört einmal vor die Schleife, in der Schleife wird nur addiert."
+    source: "VL 5, Folie 26"
+
+  - id: gdp-vl05-024
+    type: code
+    kind: bug
+    prompt: "Die Schleife soll alle Zimmer in `hotel` (drei Stück) nummeriert ausgeben. Was passiert, und welches Zeichen ist falsch?"
+    code: |
+      for (int i = 0; i <= hotel.size(); i++) {
+          System.out.println(i + ": Zimmer " + hotel.get(i).nummer);
+      }
+    run: |
+      import java.util.ArrayList;
+      public class Main {
+          public static void main(String[] args) {
+              ArrayList<Zimmer> hotel = new ArrayList<>();
+              hotel.add(new Zimmer(12, 89.0));
+              hotel.add(new Zimmer(7, 64.5));
+              hotel.add(new Zimmer(23, 77.0));
+      {code}
+          }
+      }
+    expect: runtime_error
+    error_contains: "IndexOutOfBoundsException"
+    answer: "**Nach drei Zeilen Absturz mit `IndexOutOfBoundsException`: `<=` muss `<` sein.**"
+    explanation: "`i` darf nur von 0 bis `size() - 1` laufen. Mit „kleiner gleich“ kommt die Schleife bei `get(3)` an."
+    source: "VL 5, Folie 27"
+
+  # ---------------------------------------------------------------- Array oder ArrayList?
+  - id: gdp-vl05-025
+    type: basic
+    front: "Ein Restaurant speichert die Bestellungen eines Abends in der Reihenfolge des Eingangs. Array oder `ArrayList`, und warum?"
+    back: "**`ArrayList`: Die Anzahl steht vorher nicht fest, und `add` hängt in der Reihenfolge des Eingangs an.**"
+    extra: "Faustregel: im Zweifel ArrayList. Ein Array, wenn die Anzahl fest ist, etwa die Öffnungsstunden für 7 Wochentage: `int[] stunden = new int[7];`"
+    figure_back: "gdp-vl05-025.png"
+    source: "VL 5, Folie 28, 30"
+
+  - id: gdp-vl05-026
+    type: basic
+    front: "Was kann ein Array speichern, was eine `ArrayList` nicht direkt speichern kann?"
+    back: "**Werte primitiver Typen wie `int` und `double`.** Eine ArrayList speichert nur Objekte."
+    extra: "`int[] preise` geht, `ArrayList<int>` nicht. Für die Liste nimmt man `ArrayList<Integer>` oder `ArrayList<Double>`."
+    source: "VL 5, Folie 21, 28"
+
+  - id: gdp-vl05-027
+    type: basic
+    front: "Warum kann Einfügen oder Entfernen in der Mitte einer sehr langen `ArrayList` Zeit kosten?"
+    back: "**Alle Elemente dahinter werden verschoben.**"
+    extra: "Lesen über den Index ist bei Array und ArrayList schnell. Für die Listengrößen im Kurs spielt das keine Rolle."
+    source: "VL 5, Folie 28"
+    tags: [warum]
+
+  - id: gdp-vl05-028
+    type: basic
+    front: "In KI-Code steht oft `List<String> gaeste = new ArrayList<>();`. Was ändert sich gegenüber `ArrayList<String>` links, wenn man die Liste benutzt?"
+    back: "**Nichts: `add`, `get`, `size` und `remove` funktionieren genauso.**"
+    extra: "`List` beschreibt, was eine Liste kann, `ArrayList` ist eine Umsetzung davon. Man braucht zusätzlich `import java.util.List;`."
+    source: "VL 5, Folie 29"
+
+  - id: gdp-vl05-029
+    type: basic
+    front: "Was ist das Problem an `ArrayList liste = new ArrayList();` ohne Typ in spitzen Klammern?"
+    back: "**Es passt alles hinein, etwa ein String und eine Zahl. Der Compiler warnt nur, Fehler zeigen sich erst zur Laufzeit.**"
+    extra: "Solche Raw Types stammen aus Java vor 2004 und stehen noch in alten Beispielen im Netz. Eclipse unterstreicht sie gelb. Immer den Typ dazuschreiben: `ArrayList<String>`."
+    source: "VL 5, Folie 29"
+
+  - id: gdp-vl05-030
+    type: basic
+    front: "`ArrayList<Zimmer> hotel`: Was muss man tun, um ein viertes Zimmer aufzunehmen, verglichen mit drei Einzelvariablen `z1`, `z2`, `z3`?"
+    back: "**Eine Zeile: `hotel.add(new Zimmer(...));`.** Kein neuer Variablenname, keine neue Ausgabezeile."
+    extra: "Mit Einzelvariablen bräuchte man `z4` und eine weitere `println`-Zeile. Eine for-each-Schleife gibt alle Zimmer aus, egal wie viele es sind."
+    source: "VL 5, Folie 22, 25"

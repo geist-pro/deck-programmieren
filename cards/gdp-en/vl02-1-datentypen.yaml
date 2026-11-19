@@ -1,0 +1,140 @@
+# English translation overlay for cards/gdp/vl02-1-datentypen.yaml.
+# Only text fields; code, run, answers of predict cards and figures come from the German file.
+# Identifiers in code stay German, exactly as on the slides (gaeste, zimmerNummer, preis, ...).
+lecture:
+  deck: "L02.1 Data Types & First Program"
+  header: "GdP · L2.1 Data Types"
+cards:
+  - id: gdp-vl02-1-001
+    text: "In Java every program lives in a {{c1::class}}. The file must have exactly the same name as {{c2::the public class}}: `public class Hotel` belongs in `Hotel.java`."
+    extra: "Upper and lower case must match too: capital H in the code and in the file name."
+    source: "L2.1, slide 4"
+  - id: gdp-vl02-1-002
+    front: "What is the method `main` for in a Java program?"
+    back: "**It is the entry point: at startup Java looks for exactly this method and starts there.**"
+    extra: "At first you copy the line `public static void main(String[] args)` exactly as it is. `static` and `String[] args` come later."
+    source: "L2.1, slide 4"
+  - id: gdp-vl02-1-003
+    text: "In Java every statement ends with {{c1::a semicolon}}. Indentation is ignored by {{c2::the compiler}}; for humans it shows where a brace is missing."
+    extra: "After the class line and the `main` line there is no semicolon but a curly brace. You indent one step per level (in Eclipse a tab of width 4); Ctrl+Shift+F formats automatically."
+    source: "L2.1, slide 5"
+  - id: gdp-vl02-1-004
+    prompt: "What does this program print?"
+    explanation: "The 3 is in quotation marks, so it is a String. String plus number gives a String: the 4 is appended. `println(3 + 4)` without quotation marks would print 7."
+    source: "L2.1, slides 6–7"
+  - id: gdp-vl02-1-005
+    front: "A comment in code can say *what* happens or *why* it happens. Which of the two belongs in it?"
+    back: "**Why something happens.** What happens you can usually see from the code."
+    extra: "`//` makes a comment up to the end of the line, `/* … */` spans several lines. The compiler skips both."
+    source: "L2.1, slide 8"
+  - id: gdp-vl02-1-006
+    front: "Why can't the processor run `Hotel.java` directly?"
+    back: "**The CPU only understands machine code.** So Java has to be translated."
+    extra: "Three levels for the same 'a': machine code `10110000 01100001` (for the processor), assembler `mov al, 61h` (for specialists, only one CPU family), high-level language `char c = 'a';` (for humans, all platforms)."
+    source: "L2.1, slide 10"
+  - id: gdp-vl02-1-007
+    front: "Translating: what is the difference between a **compiler** and an **interpreter**?"
+    back: "**The compiler translates the whole program once in advance. The interpreter translates step by step while the program runs.**"
+    extra: "A compiler is like a book translator: fast, but the result only fits one platform. An interpreter is like a simultaneous interpreter: runs anywhere there is an interpreter, but is slower."
+    source: "L2.1, slide 11"
+  - id: gdp-vl02-1-008
+    front: "How a Java program runs: which tool works in the hidden step 2, and what does it do?"
+    back: "**`javac`, the compiler: it checks `Hotel.java` and translates it.**"
+    extra: "This is where typos show up, before anything runs. Eclipse translates with its own compiler, already when you save."
+    source: "L2.1, slide 12"
+  - id: gdp-vl02-1-009
+    front: "How a Java program runs: which file is created in the hidden step 3, what is in it, and who is it for?"
+    back: "**`Hotel.class` with bytecode, meant for the JVM, not for humans.**"
+    extra: "You never open or edit this file by hand. `java Hotel` starts the JVM, which runs the bytecode."
+    source: "L2.1, slide 12"
+  - id: gdp-vl02-1-010
+    text: "While the program runs, the JVM also translates frequently used bytecode into machine code. This is called {{c1::just-in-time compilation (JIT)}}."
+    extra: "That is why Java is not slow. \"Write once, run anywhere\": the same `.class` file runs on Windows, macOS and Linux, anywhere with a JVM."
+    source: "L2.1, slide 12"
+  - id: gdp-vl02-1-011
+    front: "Memory holds `01100001`. That can be the number 97 or the letter 'a'. What decides which one is meant?"
+    back: "**The data type.**"
+    extra: "The bits look the same. That is why every variable has a type, and why types have limits."
+    source: "L2.1, slide 14"
+  - id: gdp-vl02-1-012
+    text: "In `int zimmerNummer = 12;` (room number), `int` is the {{c1::type}} (which values are allowed), `zimmerNummer` is the {{c2::name}} and `12` is the {{c3::value}}."
+    source: "L2.1, slide 15"
+  - id: gdp-vl02-1-013
+    front: "A variable is often described as a label stuck on a value. Which misconception is this picture meant to prevent?"
+    back: "**That after a new assignment a variable holds the old and the new value at the same time.**"
+    extra: "After `zimmerNummer = 14;` the 12 is gone. More precisely, a variable is a storage location (L2.2): an assignment replaces the old value."
+    source: "L2.1, slide 15"
+  - id: gdp-vl02-1-014
+    text: "Java types for characters and text: `char` stores {{c1::exactly one character in single quotes}} (`'P'`), `String` stores {{c2::text in double quotes}} (`\"Kino\"`, cinema)."
+    extra: "`String` is a class and is therefore capitalised. `int`, `long`, `double`, `boolean`, `char` are primitive data types, written in lowercase."
+    source: "L2.1, slide 16"
+  - id: gdp-vl02-1-015
+    prompt: "For line 1 Eclipse reports `The literal 8000000000 of type int is out of range` (javac: `integer number too large`). What is the cause, and how do you fix it?"
+    answer: "**Without `L`, a number in the code is an `int`, and 8 billion does not fit into an `int`.** Fix: `8000000000L`."
+    explanation: "`int` goes up to about ±2.1 billion, `long` up to about 9.2 quintillion. The fact that the variable on the left (*weltbevoelkerung* = world population) is a `long` does not help the literal on the right."
+    source: "L2.1, slide 16"
+  - id: gdp-vl02-1-016
+    text: "Choose the type by meaning: a count is an {{c1::`int`}}, a price a {{c2::`double`}}, \"is the film shown in 3D?\" a {{c3::`boolean`}}."
+    extra: "You rarely need `byte`, `short` and `float`. Decimal numbers are written with a point: `62.5`."
+    source: "L2.1, slide 16"
+  - id: gdp-vl02-1-017
+    text: "`int gaeste;` (guests) {{c1::declares}} the variable (name and type, no value yet). `gaeste = 2;` {{c2::initialises}} it (first assignment)."
+    extra: "Usually both in one line: `int gaeste = 2;`."
+    source: "L2.1, slide 17"
+  - id: gdp-vl02-1-018
+    front: "In mathematics `gaeste = gaeste + 1` would be a contradiction. How do you read the `=` in Java?"
+    back: "**As \"gets the value\", not as \"is equal to\".**"
+    extra: "Java computes the right side with the old value (2 + 1) and sticks the label `gaeste` on the result 3."
+    source: "L2.1, slide 17"
+  - id: gdp-vl02-1-019
+    prompt: "What does this program print?"
+    explanation: "Line 2 computes once with the value `max` has at that moment, and stores 22. Java is not a spreadsheet: `total` is not recomputed when `max` changes."
+    source: "L2.1, slide 18"
+  - id: gdp-vl02-1-020
+    prompt: "What does this program print?"
+    explanation: "A `double` does not remember trailing zeros: `89.90` becomes `89.9`."
+    source: "L2.1, slide 17"
+  - id: gdp-vl02-1-021
+    prompt: "For line 2 Eclipse reports: `The local variable gaeste may not have been initialized`. What is the cause?"
+    answer: "**`gaeste` is read before it has been given a value.**"
+    explanation: "The variable is only declared, not initialised. Fix, e.g., `int gaeste = 2;`. A typical beginner mistake. `javac` reports the same as \"might not have been initialized\"."
+    source: "L2.1, slide 19"
+  - id: gdp-vl02-1-022
+    prompt: "Why does line 2 not compile?"
+    answer: "**`MAX_GAESTE` is declared with `final`. `final` prevents any later assignment.**"
+    explanation: "This is how you make a constant. Constants are written entirely in capitals, with words separated by `_`."
+    source: "L2.1, slides 17, 20"
+  - id: gdp-vl02-1-023
+    front: "Eclipse shows five error messages at once. Why do you fix only the first one first?"
+    back: "**A single error often causes follow-up errors. After the first fix they often disappear by themselves.**"
+    extra: "Two questions always help: where (file, line, red marker in the margin)? What (text of the message)? Read it yourself first, then ask an AI to explain if needed."
+    source: "L2.1, slide 19"
+  - id: gdp-vl02-1-024
+    text: "Java naming conventions: variables and methods {{c1::camelCase, lowercase first}} (`preisProNacht`, price per night), classes {{c2::uppercase first}} (`Hotel`), constants {{c3::all caps, words joined by `_`}} (`MAX_GAESTE`)."
+    extra: "For all names: no umlauts (`gaeste` instead of `gäste`, otherwise trouble with the file encoding) and no spaces."
+    source: "L2.1, slide 20"
+  - id: gdp-vl02-1-025
+    text: "In Java, `%` gives {{c1::the remainder of the integer division}}, e.g. `5 % 2` gives {{c2::1}}."
+    extra: "`%` has nothing to do with percent. Typical use: `x % 2 == 0` checks whether `x` is even."
+    source: "L2.1, slides 22–23"
+  - id: gdp-vl02-1-026
+    prompt: "What does this program print?"
+    explanation: "`int` divided by `int` gives `int`: the fractional part is cut off, not rounded. `%` gives the remainder: 7 = 3 · 2 + 1. With `a / 2.0` you would get 3.5."
+    source: "L2.1, slide 23"
+  - id: gdp-vl02-1-027
+    prompt: "What does this program print?"
+    explanation: "Internally a `char` is a number: 'a' has the code 97. `char` plus `int` gives an `int`, so `println` prints the number, not the character 'b'."
+    source: "L2.1, slide 24"
+  - id: gdp-vl02-1-028
+    prompt: "Add parentheses so that 20 is printed, without changing the numbers."
+    explanation: "Without parentheses Java computes `2 + 3 * 4` = 14. When in doubt, add parentheses: they cost nothing and make the code easier to read."
+    source: "L2.1, slide 22"
+  - id: gdp-vl02-1-029
+    prompt: "What does this program print?"
+    explanation: "Because there is a String on the left, every `+` appends; even the `boolean` is appended as the text \"true\". The spaces come only from the quotation marks: without the space before \"min\" it would read \"141min\"."
+    source: "L2.1, slide 25"
+  - id: gdp-vl02-1-030
+    prompt: "20 sweets at 0.25 euros each (*bonbons* = sweets, *preis* = price). Why does line 2 not compile?"
+    answer: "**0.25 is a decimal number and does not fit into an `int`.** Correct: `double preis = 0.25;`."
+    explanation: "A typical mistake in this exercise. A second one: `0,25` with a comma instead of a point."
+    source: "L2.1, slide 29"

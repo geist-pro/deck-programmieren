@@ -1,0 +1,177 @@
+# English translation overlay for cards/gdp/vl11-12-interfaces-dateien.yaml.
+# Only text fields; code, run, support, answers of predict cards and figures come from the German file.
+# Identifiers in code stay German, exactly as on the slides (Gruss, Hallo, Zimmer, Gast, Rezeption, ...).
+lecture:
+  deck: "L11–12 Interfaces & Files"
+  header: "GdP · L11–12 Interfaces & Files"
+cards:
+  # ---------------------------------------------------------------- Review: interfaces
+  - id: gdp-vl11-12-001
+    prompt: "What does this program print?"
+    explanation: "A variable may have the type of an interface (*Gruss* = greeting). The object behind it is a `Hallo`, so its `text()` runs. What you cannot do is create an object of an interface: `new Gruss()` does not compile."
+    source: "L11–12, slide 5"
+
+  - id: gdp-vl11-12-002
+    prompt: "Why does the class `Hallo` not compile?"
+    answer: "**`public` is missing before `text()` in line 5.** The method in the interface has no access modifier and is therefore automatically `public`."
+    explanation: "The class must not restrict the visibility. javac: \"attempting to assign weaker access privileges; was public\". Eclipse: \"Cannot reduce the visibility of the inherited method from Gruss\". Correct: `public String text() { … }`."
+    source: "L11–12, slide 5"
+
+  # ---------------------------------------------------------------- Part 1: Encapsulation
+  - id: gdp-vl11-12-003
+    front: "A `Zimmer` (room) has the attribute `public int betten` (*betten* = beds). What problem arises when another class writes `z.betten = -3;`?"
+    back: "**It compiles, and the room is in a state that should never exist.** Any class can change the value."
+    extra: "The error only shows up much later, somewhere else in the program. Encapsulation means: the object looks after its own data."
+    source: "L11–12, slide 7"
+
+  - id: gdp-vl11-12-004
+    text: "Rule of thumb for visibility: attributes {{c1::`private`}}, methods {{c2::`public`}}."
+    extra: "Then only the class's own methods change the attributes, and a setter can check every new value."
+    source: "L11–12, slide 8"
+
+  - id: gdp-vl11-12-005
+    front: "Four access levels: who may access a `protected` attribute? (hidden row, slide in German)"
+    back: "**The class itself, the same package, and subclasses, also in other packages.** Not: any class anywhere."
+    extra: "The column \"Unterklasse\" (subclass) means a subclass in another package."
+    source: "L11–12, slide 8"
+
+  - id: gdp-vl11-12-006
+    front: "Four access levels: who may access an attribute **without a modifier**? (hidden row, slide in German)"
+    back: "**The class itself and the same package.** Not subclasses in other packages."
+    extra: "Compared with `protected`, only the subclass in another package is missing. Top-level classes (not inside another class) are `public` or have no modifier."
+    source: "L11–12, slide 8"
+
+  - id: gdp-vl11-12-007
+    prompt: "This code is in the class `Rezeption` (reception). In `Zimmer`, `betten` is `private`, `setBetten` and `getBetten` are `public`. Which line does the compiler report, and why?"
+    answer: "**Line 3: `betten` is `private`, and `Rezeption` is a different class from `Zimmer`.**"
+    explanation: "The boundary is the class, not the file: the error comes even in the same file. `setBetten` may change `betten` because the method belongs to `Zimmer` and is itself `public`."
+    source: "L11–12, slide 10"
+
+  - id: gdp-vl11-12-008
+    prompt: "`betten` is `private`. What does `System.out.println(new Zimmer(3).mehrBettenAls(new Zimmer(2)));` print? (*mehrBettenAls* = more beds than, *anderes* = other)"
+    explanation: "`private` applies per class, not per object. Code in the class `Zimmer` may read the private attributes of every room, so also `anderes.betten`."
+    source: "L11–12, slide 8"
+
+  - id: gdp-vl11-12-009
+    text: "Private attributes of the superclass {{c1::are present}} in the subclass object. The subclass just cannot reach them {{c2::directly}}."
+    extra: "`private` means: only the class itself. The subclass is a different class."
+    source: "L11–12, slide 8"
+
+  - id: gdp-vl11-12-010
+    front: "A subclass `B` in another package inherits the `protected` attribute `x` from `A`. Through which kind of reference may code in `B` access `x`, and through which not?"
+    back: "**Through references of the subclass type, e.g. `this.x`. Not through a reference of the superclass type, e.g. `a.x` with `A a`.**"
+    extra: "For everyday code the rule of thumb is enough: attributes `private`, methods `public`."
+    source: "L11–12, slide 8"
+
+  - id: gdp-vl11-12-011
+    front: "Why should `setBetten(int betten)` throw an `IllegalArgumentException` for a value outside 1 to 4, instead of quietly ignoring the value?"
+    back: "**So that the error shows up at once and in the right place.** A quietly ignored value makes debugging take long."
+    extra: "Better to fail loudly: `z.setBetten(-3)` stops with the message \"1 bis 4\" (1 to 4), and you see where the problem comes from."
+    source: "L11–12, slide 9"
+
+  - id: gdp-vl11-12-012
+    front: "Eclipse or an AI also generates `setNummer(int nummer)` for `Zimmer`. Why should this setter not exist, and what do you write instead?"
+    back: "**A room number never changes. Instead of a setter: `final int nummer`.**"
+    extra: "In the same way, an account balance changes only through `einzahlen` (deposit) and `abheben` (withdraw), not through `setStand`. The assistant does not know these rules, so ask: which setter must not exist?"
+    source: "L11–12, slide 11"
+
+  - id: gdp-vl11-12-013
+    text: "`record Gast(String name, int jahr) { }` (*Gast* = guest, *jahr* = year): the attributes are {{c1::`private final`}}, and the getters are named {{c2::like the attribute, without `get`: `name()`, `jahr()`}}."
+    extra: "You also get a constructor, `toString` and `equals`. There is no setter: the values stay fixed. `println(g)` gives `Gast[name=Mia, jahr=2004]`."
+    source: "L11–12, slide 12"
+
+  - id: gdp-vl11-12-014
+    prompt: "`Gast` is the record `record Gast(String name, int jahr) { }`. Why does line 2 not compile?"
+    answer: "**The getter of a record is called `name()`, not `getName()`.**"
+    explanation: "A record creates getters with the name of the attribute. Correct: `g.name()` returns Mia."
+    source: "L11–12, slide 12"
+
+  - id: gdp-vl11-12-015
+    front: "In Java, why does a `record` not fit a `Zimmer` (room) whose number of beds can change?"
+    back: "**A record has no setters, its attributes are `final`.** The values cannot be changed after the object is created."
+    extra: "A record fits data that does not change, such as a guest or a card. For the room you still need a normal class with a checking setter."
+    source: "L11–12, slide 12"
+
+  # ---------------------------------------------------------------- Part 2: Using interfaces
+  - id: gdp-vl11-12-016
+    front: "`Gast.compareTo` returns `Integer.compare(jahr, other.jahr)`. What sign does `mia.compareTo(ben)` have (Mia 2004, Ben 1999), and what does that mean for the order?"
+    back: "**Greater than 0: Mia comes after Ben.**"
+    extra: "`a.compareTo(b)` less than 0 means a comes before b, 0 means equal, greater than 0 means a comes after b. Only the sign counts (the JDK returns 1 here)."
+    source: "L11–12, slide 14"
+
+  - id: gdp-vl11-12-017
+    front: "Why do you write `Integer.compare(jahr, other.jahr)` in `compareTo` instead of `jahr - other.jahr`?"
+    back: "**The subtraction can overflow for large numbers and then give the wrong sign.**"
+    extra: "`Integer.compare` always gives the right sign (in the JDK -1, 0 or 1). For other orders, e.g. by name, there is `Comparator`."
+    source: "L11–12, slide 14"
+
+  - id: gdp-vl11-12-018
+    prompt: "`Gast` implements `Comparable<Gast>` and compares in `compareTo` with `Integer.compare(jahr, other.jahr)`. What does this program print?"
+    explanation: "`Collections.sort` calls `compareTo` and sorts by year of birth, ascending."
+    source: "L11–12, slide 15"
+
+  - id: gdp-vl11-12-019
+    front: "Why does `Collections.sort(gaeste)` give a compiler error if `Gast` does not implement `Comparable<Gast>`?"
+    back: "**`sort` relies on `compareTo` being there, so it requires `Comparable` elements.**"
+    extra: "Here the interface really is a contract. `String` and `Integer` are already `Comparable`, so you can sort lists of them directly."
+    source: "L11–12, slide 15"
+
+  - id: gdp-vl11-12-020
+    prompt: "What does this program print?"
+    explanation: "`String` compares character by character by Unicode. The capital letters A–Z come before the lowercase letters a–z: 'B' has the number 66, 'a' has 97. To ignore case: `namen.sort(String.CASE_INSENSITIVE_ORDER)`."
+    source: "L11–12, slide 16"
+
+  - id: gdp-vl11-12-021
+    text: "An interface plus test cases as a task, also for an AI: the interface says {{c1::what gets built}}. The test cases say {{c2::when it is correct}}."
+    extra: "After that you check yourself: are the attributes `private`? Are inputs checked? Green tests alone are not enough."
+    source: "L11–12, slide 17"
+
+  # ---------------------------------------------------------------- Part 3: Files
+  - id: gdp-vl11-12-022
+    prompt: "What does this program print?"
+    explanation: "`\\n` is an escape sequence for the line break, so the text has two lines (*Zeilen* = lines). `readAllLines` returns each line as one element of the list, without the line break."
+    source: "L11–12, slide 20"
+
+  - id: gdp-vl11-12-023
+    text: "`Files.writeString(datei, text)` {{c1::overwrites}} an existing file. `Files.readAllLines(datei)` reads {{c2::all lines into a list}}."
+    extra: "`Path.of(\"notiz.txt\")` names the file (*datei* = file, *notiz* = note); in Eclipse it lives in the project folder. `writeString` and `readAllLines` use UTF-8 if you give no character set, and there is nothing to close."
+    source: "L11–12, slide 20"
+
+  - id: gdp-vl11-12-024
+    prompt: "Why does this `main` not compile?"
+    answer: "**`writeString` and `readAllLines` can throw an `IOException`, and you have to deal with it.**"
+    explanation: "Fix: `throws IOException` after `main(String[] args)`, or put the lines in try-catch. javac: \"unreported exception IOException; must be caught or declared to be thrown\". Eclipse: \"Unhandled exception type IOException\"."
+    source: "L11–12, slides 20–21"
+
+  - id: gdp-vl11-12-025
+    text: "`IOException` is a {{c1::checked}} exception: the compiler requires you to {{c2::catch it with try-catch or pass it on with `throws`}}."
+    extra: "If the file is missing, what you actually get is a `NoSuchFileException`, a subclass of `IOException`. `throws` in `main` is enough for small exercises. A real program catches the error and tells the user what is wrong."
+    source: "L11–12, slide 21"
+
+  - id: gdp-vl11-12-026
+    prompt: "`gaeste.csv` contains the lines `name,jahr`, `Mia,2004` and `Ben,1999`. What happens, and what is wrong?"
+    answer: "**`NumberFormatException`: the loop starts at 0, i.e. at the header row, and `parseInt(\"jahr\")` fails.**"
+    explanation: "Correct: `for (int i = 1; …)`. `split(\",\")` splits at the comma (*teile* = parts), `teile[1]` is the year as text, hence `Integer.parseInt`."
+    source: "L11–12, slide 23"
+
+  - id: gdp-vl11-12-027
+    text: "`try (BufferedReader r = Files.newBufferedReader(...)) { … }` is called {{c1::try-with-resources}}: the reader is {{c2::closed automatically at the end, even if an exception is thrown}}."
+    extra: "`readLine()` returns the next line and `null` at the end of the file, hence `while (zeile != null)` (*zeile* = line). A Scanner on `System.in`, by contrast, you never close, or you cannot read from the keyboard afterwards."
+    source: "L11–12, slide 24"
+
+  - id: gdp-vl11-12-028
+    front: "Why should you never read data from an outside source with Java serialization?"
+    back: "**Deserializing outside data can make code run. That is a security hole.**"
+    extra: "Also, the format is binary and only readable by Java. That is why web services use JSON, in Java with a library such as Jackson or Gson."
+    source: "L11–12, slide 25"
+
+  - id: gdp-vl11-12-029
+    prompt: "`Gast` is a record. What does this program print?"
+    explanation: "`==` checks whether it is the same object: there are two. A record's `equals` compares the values. That is why a round-trip test can simply check `gelesen.equals(original)` (*gelesen* = read back)."
+    source: "L11–12, slides 12, 26"
+
+  - id: gdp-vl11-12-030
+    front: "How does a **round-trip test** work for code that saves guests as CSV and reads them back?"
+    back: "**Write the list, read the file again, and then `gelesen.equals(original)` must give `true`.**"
+    extra: "This catches typical reading errors, such as a header row that was not skipped. With records it is easy because their `equals` compares the values."
+    source: "L11–12, slide 26"

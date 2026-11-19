@@ -1,0 +1,79 @@
+# English translation overlay for cards/gdp/vl01-einfuehrung.yaml.
+# Only text fields; code, run, answers of predict cards and figures come from the German file.
+# Identifiers in code stay German, exactly as on the slides (punkteA, schnitt, Mitarbeiter, ...).
+lecture:
+  deck: "L01 Introduction"
+  header: "GdP · L1 Introduction"
+cards:
+  - id: gdp-vl01-001
+    prompt: "What does this program print?"
+    explanation: "`punkteA + punkteB` (*punkte* = points) is the `int` 15, and `2` is also an `int`. Java divides as integers: 15 / 2 gives 7, the remainder is dropped. Only then is the 7 written into the `double` `schnitt` (average)."
+    source: "L1, slides 19–20"
+  - id: gdp-vl01-002
+    front: "`double schnitt = 15 / 2;` The division gives the whole number 7. Why does `System.out.println(schnitt)` then print `7.0` and not `7`?"
+    back: "**`schnitt` is a `double`, and `println` always prints a `double` with a decimal place.**"
+    extra: "When it is stored in the `double` variable, the whole number 7 becomes the decimal number 7.0. But the decimals of 7.5 are already lost by then."
+    source: "L1, slide 20"
+  - id: gdp-vl01-003
+    prompt: "Change only the number you divide by, so that the average 7.5 is printed."
+    explanation: "With `2.0`, one side of the division is a `double`. Then Java computes with decimal numbers."
+    source: "L1, slide 20"
+  - id: gdp-vl01-004
+    text: "A program can run, look plausible and still compute the wrong result, e.g. the average `(7 + 8) / 2`. Rule to remember: compiles does not mean {{c1::correct}}."
+    extra: "Errors like this can also hide in AI code. If you can read code, you find them."
+    source: "L1, slide 20"
+  - id: gdp-vl01-005
+    front: "AI now often helps write code. Why does that not make learning to program unnecessary?"
+    back: "**Only if you understand code can you judge what the AI delivers.** If you don't understand it, you have to trust it blindly."
+    extra: "AI makes mistakes that look convincing. Goal of the course: being able to read, check and fix AI code."
+    source: "L1, slides 21, 23"
+  - id: gdp-vl01-006
+    front: "Smart home: \"If the temperature is below 19 degrees, turn on the heating.\" What does programming mean in this example?"
+    back: "**Describing exactly what happens under which condition.**"
+    extra: "Behind every icon in the smart home app there is a rule like this. Whether the product pays off is a second, economic question."
+    source: "L1, slide 22"
+  - id: gdp-vl01-007
+    text: "You learn four things when programming: reading code, {{c1::decomposing}}, tools and syntax. Syntax you {{c2::look up}} instead of memorising it."
+    extra: "Decomposing means splitting a problem into small, exact steps. The focus of the course is reading code, i.e. predicting what a program prints."
+    source: "L1, slide 24"
+  - id: gdp-vl01-008
+    front: "Beginners often think syntax is the whole job. Why don't you need to memorise syntax, but do need to practise reading and decomposing?"
+    back: "**Syntax you can look up. The way of thinking behind reading and decomposing has to be practised.**"
+    extra: "In practice, reading and decomposing are harder. That is why you practise every week, by hand and on the computer."
+    source: "L1, slide 24"
+  - id: gdp-vl01-009
+    text: "Splitting a problem into small, exact steps: at its core, the result is called an {{c1::algorithm}}."
+    source: "L1, slide 24"
+  - id: gdp-vl01-010
+    text: "Java is platform-independent: a Java program runs anywhere there is a {{c1::JVM (Java Virtual Machine)}}."
+    extra: "Other reasons for Java in this course: object-oriented and widely used (enterprise software, servers, Android)."
+    source: "L1, slide 25"
+  - id: gdp-vl01-011
+    front: "Why does an object-oriented language like Java fit business tasks well?"
+    back: "**Customers, invoices and employees can be modelled directly as objects.**"
+    source: "L1, slide 25"
+  - id: gdp-vl01-012
+    front: "Anna Müller (IT, 3000 €) and Max Muster (sales, 3500 €) work at a company. What is the class here, and what are the objects?"
+    back: "**Class: `Mitarbeiter` (employee) with name, salary, department. Objects: Anna and Max with their concrete values.**"
+    extra: "The class is the blank form, objects are the filled-in copies. You can make as many objects from one class as you like."
+    source: "L1, slide 28"
+  - id: gdp-vl01-013
+    text: "A class is a {{c1::template}} (the blank form). An object is a {{c2::concrete instance with concrete values}} (a filled-in form)."
+    source: "L1, slide 28"
+  - id: gdp-vl01-014
+    text: "In a class, the {{c1::attributes}} answer the question \"What does an employee have?\", the {{c2::methods}} answer \"What does he do, or what is done with him?\"."
+    extra: "In `Mitarbeiter`: attributes `name`, `gehalt` (salary), `abteilung` (department); method `lohnErhoehen(double betrag)` (raise pay by an amount)."
+    source: "L1, slide 29"
+  - id: gdp-vl01-015
+    text: "Rule of thumb for classes: attributes are {{c1::nouns}} (properties), methods are {{c2::verbs}} (actions)."
+    extra: "In code you recognise methods by their parentheses: `lohnErhoehen(...)`."
+    source: "L1, slides 29–30"
+  - id: gdp-vl01-016
+    front: "Hotel: for a class `Gast` (guest), `geburtsjahr` (birth year) and `einchecken` (check in) are proposed. Which becomes an attribute, which a method?"
+    back: "**`geburtsjahr` is an attribute (the hotel has to store it), `einchecken` is a method (something the guest does).**"
+    extra: "Other good methods: book, check out, pay. Other attributes: name, arrival, departure."
+    source: "L1, slide 30"
+  - id: gdp-vl01-017
+    text: "The way `lohnErhoehen` is written is called {{c1::camelCase}}: lowercase at the start, each new word begins with a capital letter."
+    extra: "You meet this convention everywhere in Java, for methods and for variables."
+    source: "L1, slide 29"

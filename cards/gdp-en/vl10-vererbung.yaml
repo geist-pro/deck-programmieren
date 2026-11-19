@@ -1,0 +1,136 @@
+# English translation overlay for cards/gdp/vl10-vererbung.yaml.
+# Only text fields; code, run, support, answers of predict cards and figures come from the German file.
+# Identifiers in code stay German, exactly as on the slides (Raum, Gaestezimmer, Tagungsraum, Buchbar, ...).
+lecture:
+  deck: "L10 Inheritance"
+  header: "GdP · L10 Inheritance"
+cards:
+  - id: gdp-vl10-001
+    front: "Which test do you use to check whether class B should inherit from class A?"
+    back: "**The \"is a\" test:** a B is an A. A guest room is a room, so `Gaestezimmer extends Raum` (*Gästezimmer* = guest room, *Raum* = room)."
+    extra: "Non-example: a room is not a hotel. A hotel **has** rooms. \"Has a\" means: an object as an attribute, not inheritance."
+    source: "L10, slide 6"
+  - id: gdp-vl10-002
+    front: "Class hierarchy in the hotel: which class (marked) does `Raum` inherit from, although `Raum` has no `extends`?"
+    back: "**`Object`**"
+    extra: "Every class without `extends` automatically inherits from `Object`. As in UML, the arrows point to the superclass."
+    source: "L10, slide 6"
+  - id: gdp-vl10-003
+    text: "Inheritance is {{c1::transitive}}: a `Suite` is a `Gaestezimmer` and therefore also a {{c2::`Raum`}}."
+    extra: "The suite inherits everything from `Gaestezimmer` and therefore also everything from `Raum`."
+    source: "L10, slides 6, 9"
+  - id: gdp-vl10-004
+    prompt: "`Raum` only has the constructor `Raum(int nummer)`. Why does the subclass not compile?"
+    answer: "**The call `super(nummer);` is missing.** It is usually the first line of the constructor."
+    explanation: "Constructors are not inherited. Without `super(...)`, Java tries to call `Raum()` without parameters, and that does not exist. Eclipse: \"Implicit super constructor Raum() is undefined\". Up to Java 24, `super(...)` must be the first statement; since Java 25, statements may come before it."
+    source: "L10, slides 8–9"
+  - id: gdp-vl10-005
+    text: "In Java every class except `Object` has exactly {{c1::one}} direct superclass (`extends`), but can implement {{c2::any number of interfaces}}."
+    extra: "Example: `class Gaestezimmer extends Raum implements Buchbar` (*buchbar* = bookable). A superclass may have any number of subclasses."
+    source: "L10, slides 9, 27"
+  - id: gdp-vl10-006
+    front: "Why does Java allow only **one** superclass (`class A extends B, C` is not possible)?"
+    back: "**If two superclasses wrote the same method differently, it would be unclear which one applies.**"
+    extra: "For \"several types\", Java has interfaces."
+    source: "L10, slide 9"
+  - id: gdp-vl10-007
+    prompt: "Which line does not compile, and why?"
+    answer: "**Line 4: not every guest room is a suite.**"
+    explanation: "Rule of thumb: the more general type may be on the left, the more specific one on the right. Line 3 is allowed, because every class inherits from `Object` (*Tagungsraum* = conference room). Eclipse: \"Type mismatch: cannot convert from Gaestezimmer to Suite\"."
+    source: "L10, slide 10"
+  - id: gdp-vl10-008
+    text: "In `Raum r = new Gaestezimmer(12, 2);`, `Raum` is the {{c1::static}} type (type of the variable) and `Gaestezimmer` is the {{c2::dynamic}} type (type of the object)."
+    extra: "The static type is on the left; the compiler checks with it. The dynamic type comes from `new`; the object always stays a guest room."
+    source: "L10, slide 11"
+  - id: gdp-vl10-009
+    front: "What is the difference between **overriding** and **overloading** a method?"
+    back: "**Overriding: same signature in the subclass, replaces the superclass method. Overloading: different parameters, a second method is created.**"
+    extra: "Signature = name + parameter types. When overriding, the return type must also fit. `super.beschreibung()` (*beschreibung* = description) calls the superclass version."
+    source: "L10, slide 13 (overloading only in the script); L3, slides 16–21"
+  - id: gdp-vl10-010
+    prompt: "What does this program print? In `Raum`, `beschreibung()` (description) returns `\"Raum \" + nummer`; in `Gaestezimmer` it returns `super.beschreibung() + \", \" + betten + \" Betten\"` (*Betten* = beds)."
+    explanation: "At runtime the method of the object runs, and that is a guest room. The type on the left (`Raum`) only decides whether the call is allowed. This is called dynamic binding."
+    source: "L10, slide 14"
+  - id: gdp-vl10-011
+    text: "Dynamic binding: the variable determines {{c1::what you may call}}. The object determines {{c2::what happens}}."
+    extra: "The compiler only knows the static type and checks: is there a `beschreibung()` in `Raum`? The JVM sees the dynamic type and calls the method of the object."
+    source: "L10, slide 15"
+  - id: gdp-vl10-012
+    prompt: "The object has beds. Why does line 3 still not compile?"
+    answer: "**The compiler only sees the static type `Raum`, and `Raum` has no attribute `betten` (beds).**"
+    explanation: "It does not know which object will later be stuck to the `Raum` label. Eclipse: \"betten cannot be resolved or is not a field\". If you really need the beds, cast to `Gaestezimmer`."
+    source: "L10, slide 16"
+  - id: gdp-vl10-013
+    prompt: "What does this program print? (`Suite` does not override `beschreibung()`.)"
+    explanation: "Each object answers in its own way (polymorphism). For the suite, Java searches upward from its class and finds `beschreibung()` in `Gaestezimmer`. A new kind of room does not change the loop. (*raeume* = rooms, *Tagungsraum … für 40* = conference room … for 40.)"
+    source: "L10, slide 17"
+  - id: gdp-vl10-014
+    prompt: "`System.out.println(new Raum(5))` should print \"Raum 5\", but shows something like `Raum@1b6d3586`. Why?"
+    answer: "**Typo `toStrin`: that is a new method, so `toString()` from `Object` is not overridden.**"
+    explanation: "`println(r)` calls `r.toString()`. With `@Override` above the method, the compiler would have reported the typo. Eclipse: \"The method toStrin() of type Raum must override or implement a supertype method\" (javac: \"does not override or implement a method from a supertype\")."
+    source: "L10, slide 18"
+  - id: gdp-vl10-015
+    prompt: "Why does line 7 not compile?"
+    answer: "**You cannot create an object of an abstract class.** Only of concrete subclasses like `Tagungsraum`."
+    explanation: "Nobody books a \"room\"; what gets booked is a guest room or a conference room. An abstract class is a half-finished template. Eclipse: \"Cannot instantiate the type Raum\"."
+    source: "L10, slide 20"
+  - id: gdp-vl10-016
+    text: "An abstract method like `public abstract double preisProTag();` (price per day) has {{c1::no body (a semicolon instead of braces)}}. Every concrete subclass {{c2::must write it}}."
+    extra: "This way `Raum` determines that every room has a price, but not which one. An abstract class may still have normal attributes, methods and constructors."
+    source: "L10, slide 20"
+  - id: gdp-vl10-017
+    text: "Casting: upward (`Gaestezimmer` → `Raum`) works {{c1::always and automatically}}, downward (`Raum` → `Gaestezimmer`) only {{c2::with a cast: `(Gaestezimmer) r`}}. A cast never changes {{c3::the object}}, only the label."
+    extra: "The downcast is a promise to the compiler: \"This is a guest room.\""
+    source: "L10, slide 21"
+  - id: gdp-vl10-018
+    prompt: "The program compiles, but stops in line 2 with a `ClassCastException`. Why does the compiler allow the cast, and why does it fail?"
+    answer: "**The compiler only knows the label `Raum`, and a room could be a guest room. At runtime, however, the object is a conference room.**"
+    explanation: "The cast's promise was false. The program never even gets to `g.betten`, so not to a default value 0 either. Safe: first check with `instanceof`, then cast."
+    source: "L10, slide 22"
+  - id: gdp-vl10-019
+    prompt: "What does this program print? (The constructor `Suite(int nummer)` calls `super(nummer, 2)`, so the suite has 2 beds; *Betten* = beds.)"
+    explanation: "`instanceof` is true for the guest room and the suite (a suite is also a guest room), false for the conference room. With pattern matching (`… g`) you no longer need a cast. For `null`, `instanceof` always returns false."
+    source: "L10, slide 23"
+  - id: gdp-vl10-020
+    prompt: "`r` is a suite, but \"Zimmer\" (room) is printed. What is wrong?"
+    answer: "**The order: a suite is also a guest room, so the first branch already matches.** `Suite` must come before `Gaestezimmer`."
+    explanation: "Better without a chain at all: `r.beschreibung()`. Every class knows its own behaviour, and a new kind of room needs no new branch."
+    source: "L10, slide 24"
+  - id: gdp-vl10-021
+    front: "AI code tells kinds of rooms apart with an `instanceof` chain (\"is it a suite …, else a guest room …, else a conference room …\"). What is usually the better solution?"
+    back: "**Call an overridden method, e.g. `r.beschreibung()`.** The question to ask: does this belong in the class as a method?"
+    extra: "Then dynamic binding decides, and a new kind of room needs no new branch. `instanceof` is for special cases."
+    source: "L10, slide 24"
+  - id: gdp-vl10-022
+    front: "The hotel also rents out bikes. Why is `Leihrad extends Raum` (*Leihrad* = rental bike) wrong, and what fits instead?"
+    back: "**A rental bike is not a room (the \"is a\" test fails). What they share is an ability, \"can be booked\": an interface `Buchbar` (bookable).**"
+    extra: "`public interface Buchbar { double preis(int tage); }` and `class Leihrad implements Buchbar` (*preis* = price, *tage* = days)."
+    source: "L10, slides 26–27"
+  - id: gdp-vl10-023
+    prompt: "Why does `Leihrad` not compile?"
+    answer: "**Interface methods without an access modifier are automatically `public`. The class is missing `public`, which would reduce the visibility.**"
+    explanation: "Correct: `public double preis(int tage)`. Eclipse: \"Cannot reduce the visibility of the inherited method from Buchbar\". A typical mistake with interfaces."
+    source: "L10, slide 27"
+  - id: gdp-vl10-024
+    prompt: "What does this program print? (Guest room: 89 € per day, rental bike: 12 € per day, both `implements Buchbar`.)"
+    explanation: "3 · 89 = 267 plus 3 · 12 = 36. The basket (*korb*) only knows `Buchbar`; the object decides which `preis` method runs. Dynamic binding via an interface."
+    source: "L10, slide 28"
+  - id: gdp-vl10-025
+    front: "Rule of thumb: when do you use an abstract class, and when an interface?"
+    back: "**Shared code (\"is a\"): abstract class. Shared ability (\"can\") without shared code: interface.**"
+    extra: "Every class except `Object` has exactly one superclass, but any number of interfaces. An interface has no instance attributes, only constants."
+    source: "L10, slide 29"
+  - id: gdp-vl10-026
+    text: "`List<String> namen = new ArrayList<>();`: the static type is {{c1::the interface `List`}}. Advantage: later you can use {{c2::another implementation such as `LinkedList`}} without changing the rest."
+    extra: "This is called programming against the interface: `ArrayList` implements `List`."
+    source: "L10, slide 29"
+  - id: gdp-vl10-027
+    front: "BlackJack with inheritance: why is the superclass `Teilnehmer` (participant, with a hand and `willKarte()`) abstract?"
+    back: "**There is no participant who is neither player nor dealer.**"
+    extra: "`willKarte()` (wants a card) is abstract: the dealer wants a card as long as his total is at most 16; the player is asked at the keyboard. The game flow only calls `t.willKarte()`, no matter who `t` is."
+    source: "L10, slide 30"
+  - id: gdp-vl10-028
+    prompt: "`Raum` is now abstract. Why does `Tagungsraum` not compile?"
+    answer: "**`Tagungsraum` does not write the abstract method `preisProTag()`.** A concrete subclass must write every abstract method of the superclass."
+    explanation: "Correct: `@Override public double preisProTag() { return 300.0; }`. The other option would be to make `Tagungsraum` abstract too; but then you cannot create a conference room."
+    source: "L10, slide 20"

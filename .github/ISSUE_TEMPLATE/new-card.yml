@@ -1,0 +1,22 @@
+name: Suggest a new card
+description: Something from the lecture that deserves a card
+labels: [new-card]
+body:
+  - type: input
+    id: lecture
+    attributes:
+      label: Lecture and slide
+    validations:
+      required: true
+  - type: textarea
+    id: front
+    attributes:
+      label: Question (or cloze sentence)
+    validations:
+      required: true
+  - type: textarea
+    id: back
+    attributes:
+      label: Answer
+    validations:
+      required: true

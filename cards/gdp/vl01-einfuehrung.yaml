@@ -1,0 +1,134 @@
+lecture:
+  id: gdp-vl01
+  deck: "VL 01 Einführung"
+  header: "GdP · VL 1 Einführung"
+  lang: de
+cards:
+  # ---------------------------------------------------------------- Warum programmieren? (Folie 19–20)
+  - id: gdp-vl01-001
+    type: code
+    kind: predict
+    prompt: "Was gibt dieses Programm aus?"
+    code: |
+      int punkteA = 7;
+      int punkteB = 8;
+      double schnitt = (punkteA + punkteB) / 2;
+      System.out.println(schnitt);
+    answer: "7.0"
+    explanation: "`punkteA + punkteB` ist der `int` 15, und `2` ist auch ein `int`. Java teilt ganzzahlig: 15 / 2 ergibt 7, der Rest fällt weg. Erst danach wird die 7 in den `double` `schnitt` geschrieben."
+    source: "VL 1, Folie 19–20"
+
+  - id: gdp-vl01-002
+    type: basic
+    front: "`double schnitt = 15 / 2;` Die Division ergibt die ganze Zahl 7. Warum gibt `System.out.println(schnitt)` dann `7.0` aus und nicht `7`?"
+    back: "**`schnitt` ist ein `double`, und `println` gibt einen `double` immer mit Nachkommastelle aus.**"
+    extra: "Beim Speichern in die `double`-Variable wird aus der ganzen Zahl 7 die Kommazahl 7.0. Die Nachkommastellen von 7,5 sind da aber schon verloren."
+    source: "VL 1, Folie 20"
+    tags: [warum]
+
+  - id: gdp-vl01-003
+    type: code
+    kind: fill
+    prompt: "Ändere nur die Zahl, durch die geteilt wird, damit der Durchschnitt 7.5 ausgegeben wird."
+    code: |
+      int punkteA = 7;
+      int punkteB = 8;
+      double schnitt = (punkteA + punkteB) / {{c1::2.0}};
+      System.out.println(schnitt);
+    answer: "7.5"
+    explanation: "Mit `2.0` ist eine Seite der Division ein `double`. Dann rechnet Java mit Kommazahlen."
+    source: "VL 1, Folie 20"
+
+  - id: gdp-vl01-004
+    type: cloze
+    text: "Ein Programm kann laufen, plausibel aussehen und trotzdem falsch rechnen, etwa beim Durchschnitt `(7 + 8) / 2`. Merksatz: Kompiliert heißt nicht {{c1::korrekt}}."
+    extra: "Solche Fehler können auch in KI-Code stecken. Wer Code lesen kann, findet sie."
+    source: "VL 1, Folie 20"
+
+  - id: gdp-vl01-005
+    type: basic
+    front: "KI schreibt inzwischen oft Code mit. Warum macht das Programmierenlernen nicht überflüssig?"
+    back: "**Nur wer Code versteht, kann beurteilen, was die KI liefert.** Wer ihn nicht versteht, muss ihr blind vertrauen."
+    extra: "KI macht Fehler, die überzeugend aussehen. Ziel des Kurses: KI-Code lesen, prüfen und reparieren können."
+    source: "VL 1, Folie 21, 23"
+    tags: [warum]
+
+  - id: gdp-vl01-006
+    type: basic
+    front: "Smart Home: „Wenn die Temperatur unter 19 Grad liegt, schalte die Heizung an.“ Was heißt Programmieren an diesem Beispiel?"
+    back: "**Genau beschreiben, was unter welcher Bedingung passiert.**"
+    extra: "Hinter jedem Symbol in der Smart-Home-App steckt so eine Regel. Ob sich das Produkt lohnt, ist eine zweite, wirtschaftliche Frage."
+    source: "VL 1, Folie 22"
+
+  # ---------------------------------------------------------------- Wie lernt man Programmieren? (Folie 24)
+  - id: gdp-vl01-007
+    type: cloze
+    text: "Vier Dinge lernt man beim Programmieren: Code lesen, {{c1::Zerlegen}}, Werkzeuge und Syntax. Syntax {{c2::schlägt man nach}}, statt sie auswendig zu lernen."
+    extra: "Zerlegen heißt: ein Problem in kleine, genaue Schritte teilen. Den Schwerpunkt des Kurses bildet das Code-Lesen, also vorhersagen, was ein Programm ausgibt."
+    source: "VL 1, Folie 24"
+
+  - id: gdp-vl01-008
+    type: basic
+    front: "Anfänger halten die Syntax oft für die ganze Arbeit. Warum muss man Syntax nicht auswendig lernen, Lesen und Zerlegen aber üben?"
+    back: "**Syntax kann man nachschlagen. Die Denkweise beim Lesen und Zerlegen muss man üben.**"
+    extra: "In der Praxis sind Lesen und Zerlegen schwieriger. Deshalb übt man jede Woche, von Hand und am Rechner."
+    source: "VL 1, Folie 24"
+    tags: [warum]
+
+  - id: gdp-vl01-009
+    type: cloze
+    text: "Ein Problem in kleine, genaue Schritte zerlegen: Das Ergebnis nennt man im Kern einen {{c1::Algorithmus}}."
+    source: "VL 1, Folie 24"
+
+  # ---------------------------------------------------------------- Java (Folie 25)
+  - id: gdp-vl01-010
+    type: cloze
+    text: "Java ist plattformunabhängig: Ein Java-Programm läuft überall, wo es eine {{c1::JVM (Java Virtual Machine)}} gibt."
+    extra: "Weitere Gründe für Java im Kurs: objektorientiert und verbreitet (Unternehmenssoftware, Server, Android)."
+    source: "VL 1, Folie 25"
+
+  - id: gdp-vl01-011
+    type: basic
+    front: "Warum passt eine objektorientierte Sprache wie Java gut zu Aufgaben aus der Wirtschaft?"
+    back: "**Kunden, Rechnungen und Mitarbeiter lassen sich direkt als Objekte abbilden.**"
+    source: "VL 1, Folie 25"
+    tags: [warum]
+
+  # ---------------------------------------------------------------- Klasse und Objekt (Folie 28–30)
+  - id: gdp-vl01-012
+    type: basic
+    front: "Anna Müller (IT, 3000 €) und Max Muster (Vertrieb, 3500 €) arbeiten in einem Unternehmen. Was ist hier die Klasse, und was sind die Objekte?"
+    back: "**Klasse: `Mitarbeiter` mit Name, Gehalt, Abteilung. Objekte: Anna und Max mit ihren konkreten Werten.**"
+    extra: "Die Klasse ist das leere Formular, Objekte sind die ausgefüllten Exemplare. Aus einer Klasse kann man beliebig viele Objekte machen."
+    figure_back: "gdp-vl01-012.png"
+    source: "VL 1, Folie 28"
+
+  - id: gdp-vl01-013
+    type: cloze
+    text: "Eine Klasse ist eine {{c1::Vorlage}} (das leere Formular). Ein Objekt ist ein {{c2::konkretes Exemplar mit konkreten Werten}} (ein ausgefülltes Formular)."
+    source: "VL 1, Folie 28"
+
+  - id: gdp-vl01-014
+    type: cloze
+    text: "In einer Klasse beantworten die {{c1::Attribute}} die Frage „Was hat ein Mitarbeiter?“, die {{c2::Methoden}} die Frage „Was tut er, oder was wird mit ihm gemacht?“."
+    extra: "In `Mitarbeiter`: Attribute `name`, `gehalt`, `abteilung`; Methode `lohnErhoehen(double betrag)`."
+    source: "VL 1, Folie 29"
+
+  - id: gdp-vl01-015
+    type: cloze
+    text: "Merkregel für Klassen: Attribute sind {{c1::Substantive}} (Eigenschaften), Methoden sind {{c2::Verben}} (Aktionen)."
+    extra: "Im Code erkennt man Methoden an den Klammern: `lohnErhoehen(...)`."
+    source: "VL 1, Folie 29–30"
+
+  - id: gdp-vl01-016
+    type: basic
+    front: "Hotel: Für eine Klasse `Gast` werden `geburtsjahr` und `einchecken` vorgeschlagen. Was davon wird ein Attribut, was eine Methode?"
+    back: "**`geburtsjahr` ist ein Attribut (das Hotel muss es speichern), `einchecken` ist eine Methode (etwas, das der Gast tut).**"
+    extra: "Weitere gute Methoden: buchen, auschecken, bezahlen. Weitere Attribute: Name, Anreise, Abreise."
+    source: "VL 1, Folie 30"
+
+  - id: gdp-vl01-017
+    type: cloze
+    text: "Die Schreibweise `lohnErhoehen` heißt {{c1::camelCase}}: vorne klein, jedes neue Wort beginnt mit einem Großbuchstaben."
+    extra: "Diese Konvention begegnet einem in Java überall, bei Methoden und bei Variablen."
+    source: "VL 1, Folie 29"

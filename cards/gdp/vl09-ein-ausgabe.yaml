@@ -1,0 +1,372 @@
+lecture:
+  id: gdp-vl09
+  deck: "VL 09 Ein-/Ausgabe & Exceptions"
+  header: "GdP · VL 9 Ein-/Ausgabe"
+  lang: de
+cards:
+  # ---------------------------------------------------------------- Aufwärmen und Bibliotheken
+  - id: gdp-vl09-001
+    type: code
+    kind: predict
+    prompt: "Was gibt dieses Programm aus?"
+    code: |
+      int n = 10;
+      do {
+          System.out.print(n + " ");
+          n++;
+      } while (n < 10);
+    answer: "10"
+    explanation: "do-while prüft erst nach dem Durchlauf und läuft deshalb mindestens einmal. Danach ist `n` 11, `11 < 10` ist falsch. Eine normale while-Schleife gäbe nichts aus."
+    source: "VL 9, Folie 4"
+
+  - id: gdp-vl09-002
+    type: code
+    kind: predict
+    prompt: "Was gibt dieses Programm aus?"
+    code: |
+      System.out.println(Math.sqrt(16));
+      System.out.println(Integer.parseInt("42") + 1);
+      System.out.println(Double.parseDouble("2.50") * 2);
+    answer: |
+      4.0
+      43
+      5.0
+    explanation: "`Math.sqrt` liefert ein `double`. `parseInt` macht aus dem Text \"42\" die Zahl 42, `parseDouble` aus \"2.50\" die Kommazahl 2.5. Alle drei sind static und werden über den Klassennamen aufgerufen."
+    source: "VL 9, Folie 8"
+
+  - id: gdp-vl09-003
+    type: cloze
+    text: "Zu jedem einfachen Typ gibt es eine {{c1::Hüllklasse}}: zu `int` gehört `Integer`, zu `double` gehört `Double`. Man braucht sie z. B. für Listen: {{c2::`ArrayList<Double>`}} statt `ArrayList<double>`."
+    extra: "Die Hüllklassen bringen auch nützliche static-Methoden mit: `Integer.parseInt`, `Double.parseDouble`."
+    source: "VL 9, Folie 8"
+
+  - id: gdp-vl09-004
+    type: basic
+    front: "Auf einem deutsch eingestellten Rechner: Welches Dezimaltrennzeichen erwartet `Double.parseDouble`, und welches `sc.nextDouble()`?"
+    back: "**`parseDouble` erwartet einen Punkt (\"2.50\"), der Scanner ein Komma (3,5).**"
+    extra: "Der Scanner nutzt die Spracheinstellung des Rechners. Mit dem falschen Zeichen gibt es eine Exception: `parseDouble(\"2,50\")` → NumberFormatException, \"3.5\" beim Scanner → InputMismatchException."
+    source: "VL 9, Folie 8, 16"
+
+  - id: gdp-vl09-005
+    type: cloze
+    text: "Klassen aus dem Paket {{c1::`java.lang`}} (String, Math, Integer, System) sind ohne `import` verfügbar. `Scanner` und `ArrayList` kommen aus {{c2::`java.util`}} und brauchen ein `import`."
+    extra: "`import` steht nach der `package`-Zeile und vor der Klasse. Eclipse ergänzt fehlende imports mit Strg+Umschalt+O. `import java.util.*` holt alle Klassen des Pakets."
+    source: "VL 9, Folie 9"
+
+  - id: gdp-vl09-006
+    type: cloze
+    text: "In der Java-Dokumentation einer Methode liest man drei Dinge: was man hineingibt (Parameter), {{c1::was zurückkommt (Returns)}} und {{c2::was schiefgehen kann (Throws)}}."
+    extra: "Bei `Integer.parseInt` steht dort `throws NumberFormatException`: wenn der Text keine Zahl enthält."
+    source: "VL 9, Folie 10"
+
+  - id: gdp-vl09-007
+    type: code
+    kind: bug
+    prompt: "Zeile 2 stammt aus einer KI-Antwort. Warum kompiliert sie nicht?"
+    code: |
+      Scanner sc = new Scanner(System.in);
+      String wort = sc.nextString();
+    run: |
+      import java.util.Scanner;
+      public class Main {
+          public static void main(String[] args) {
+      {code}
+          }
+      }
+    expect: compile_error
+    error_contains: "cannot find symbol"
+    answer: "**Die Methode `nextString()` gibt es nicht.** Ein Wort liest `sc.next()`."
+    explanation: "KI-Werkzeuge erfinden Namen, die wahrscheinlich klingen. Prüfen: in der Doku nachsehen oder kompilieren. Eclipse meldet „The method nextString() is undefined“."
+    source: "VL 9, Folie 11"
+
+  # ---------------------------------------------------------------- Eingabe
+  - id: gdp-vl09-008
+    type: code
+    kind: predict
+    prompt: "Das Programm wird mit `java Addierer 4 7` gestartet. Was gibt es aus?"
+    code: |
+      class Addierer {
+          public static void main(String[] args) {
+              int a = Integer.parseInt(args[0]);
+              int b = Integer.parseInt(args[1]);
+              System.out.println(a + b);
+          }
+      }
+    run: |
+      public class Main {
+          public static void main(String[] x) {
+              Addierer.main(new String[] {"4", "7"});
+          }
+      }
+      {code}
+    answer: "11"
+    explanation: "Programmargumente landen als Strings in `args`: \"4\" und \"7\". Ohne `parseInt` gäbe `args[0] + args[1]` den Text \"47\"."
+    source: "VL 9, Folie 14"
+
+  - id: gdp-vl09-009
+    type: basic
+    front: "Das Java-Programm `Addierer` liest `args[0]` und `args[1]`. Was passiert, wenn man es ohne Programmargumente startet?"
+    back: "**`ArrayIndexOutOfBoundsException`:** `args` ist dann ein leeres Array, `args[0]` gibt es nicht."
+    extra: "In Eclipse gibt man Argumente unter Run → Run Configurations → Arguments ein."
+    source: "VL 9, Folie 14"
+
+  - id: gdp-vl09-010
+    type: code
+    kind: predict
+    prompt: "Die Nutzerin tippt `3` und Enter (und will danach ihren Namen tippen). Was gibt das Programm aus?"
+    code: |
+      Scanner sc = new Scanner(System.in);
+      int naechte = sc.nextInt();
+      String name = sc.nextLine();
+      System.out.println("Name: [" + name + "]");
+    run: |
+      import java.util.Scanner;
+      public class Main {
+          public static void main(String[] args) {
+      {code}
+          }
+      }
+    stdin: "3\n"
+    answer: "Name: []"
+    explanation: "`nextInt` liest nur die 3, der Zeilenumbruch bleibt liegen. `nextLine` liest den leeren Rest dieser Zeile, das Programm wartet gar nicht auf den Namen. Abhilfe: nach `nextInt` einmal `sc.nextLine()` aufrufen, oder alles mit `nextLine` lesen und mit `Integer.parseInt` umwandeln."
+    source: "VL 9, Folie 17"
+
+  - id: gdp-vl09-011
+    type: code
+    kind: predict
+    prompt: "Die Nutzerin tippt `1 Hallo` und Enter. Was gibt das Programm aus?"
+    code: |
+      Scanner sc = new Scanner(System.in);
+      int zahl = sc.nextInt();
+      System.out.println(zahl + 1);
+    run: |
+      import java.util.Scanner;
+      public class Main {
+          public static void main(String[] args) {
+      {code}
+          }
+      }
+    stdin: "1 Hallo\n"
+    answer: "2"
+    explanation: "Der Scanner liest wortweise: `nextInt` nimmt das erste Wort „1“. „Hallo“ bleibt ungelesen liegen und stört hier nicht."
+    source: "VL 9, Folie 18"
+
+  - id: gdp-vl09-012
+    type: cloze
+    text: "Bei der Eingabe `Ada Lovelace` liefert `sc.next()` {{c1::\"Ada\"}}, `sc.nextLine()` liefert {{c2::\"Ada Lovelace\"}}."
+    extra: "`next` liest ein Wort, `nextLine` den Rest der Zeile. `hasNextInt()` prüft nur, ob eine Zahl kommt, und liest nichts."
+    figure_back: "gdp-vl09-012.png"
+    source: "VL 9, Folie 16"
+
+  - id: gdp-vl09-013
+    type: basic
+    front: "Warum schließt man einen `Scanner` auf `System.in` nicht mit `close()`, einen Scanner auf eine Datei aber immer?"
+    back: "**`close()` schließt auch `System.in`; danach kann das Programm nichts mehr von der Konsole lesen. Eine Datei bliebe dagegen ohne `close()` geöffnet; mit try-with-resources wird sie von selbst geschlossen.**"
+    extra: "Darum: einen Scanner für System.in am Anfang anlegen und offen lassen. „Scanner immer schließen“ stimmt nur für Dateien."
+    source: "VL 9, Folie 16, 32"
+    tags: [warum]
+
+  # ---------------------------------------------------------------- Exceptions
+  - id: gdp-vl09-014
+    type: basic
+    front: "Stack-Trace nach der Eingabe „Hallo“: In welcher Zeile des **eigenen** Codes ist der Fehler passiert, und wie findet man sie?"
+    back: "**`Buchung.java:7`: von oben die erste Zeile mit einer eigenen Klasse.**"
+    extra: "Zuerst den Typ lesen (InputMismatchException: Eingabe passt nicht zum Typ). Die Zeilen mit `java.base` gehören zu Java selbst und hängen von der JDK-Version ab. Zeile 7 ist `sc.nextInt()`: Dort kam Text statt Zahl."
+    figure: "gdp-vl09-014.png"
+    source: "VL 9, Folie 20"
+
+  - id: gdp-vl09-015
+    type: code
+    kind: predict
+    prompt: "Was gibt dieses Programm aus?"
+    code: |
+      String eingabe = "3x";
+      try {
+          int n = Integer.parseInt(eingabe);
+          System.out.println("Nächte: " + n);
+      } catch (NumberFormatException e) {
+          System.out.println("Keine Zahl: " + eingabe);
+      }
+      System.out.println("Weiter geht's");
+    answer: |
+      Keine Zahl: 3x
+      Weiter geht's
+    explanation: "Ab der Zeile, die wirft, wird der Rest von `try` übersprungen; „Nächte:“ erscheint nie. Dann läuft der catch-Block, danach geht es normal weiter."
+    source: "VL 9, Folie 22"
+
+  - id: gdp-vl09-016
+    type: code
+    kind: predict
+    prompt: "Was gibt dieses Programm aus?"
+    code: |
+      int[] naechte = {2, 3};
+      try {
+          System.out.println(naechte[2]);
+          System.out.println("A");
+      } catch (ArrayIndexOutOfBoundsException e) {
+          System.out.println("B");
+      } finally {
+          System.out.println("C");
+      }
+      System.out.println("D");
+    answer: |
+      B
+      C
+      D
+    explanation: "Schon `naechte[2]` wirft (es gibt nur Index 0 und 1), „A“ fällt weg. catch gibt B aus, `finally` läuft immer (mit und ohne Exception), danach D."
+    source: "VL 9, Folie 23"
+
+  - id: gdp-vl09-017
+    type: code
+    kind: predict
+    prompt: "Was gibt dieses Programm aus?"
+    code: |
+      String text = "5";
+      List<String> liste = List.of("12", "7", "23");
+      try {
+          int n = Integer.parseInt(text);
+          System.out.println(liste.get(n));
+      } catch (NumberFormatException e) {
+          System.out.println("Keine Zahl");
+      } catch (IndexOutOfBoundsException e) {
+          System.out.println("Kein Zimmer " + text);
+      } finally {
+          System.out.println("Fertig");
+      }
+    run: |
+      import java.util.*;
+      public class Main {
+          public static void main(String[] args) {
+      {code}
+          }
+      }
+    answer: |
+      Kein Zimmer 5
+      Fertig
+    explanation: "`parseInt` klappt, aber `liste.get(5)` wirft bei drei Elementen. Der erste passende catch-Block gewinnt, dann läuft `finally`."
+    source: "VL 9, Folie 25"
+
+  - id: gdp-vl09-018
+    type: basic
+    front: "Ein `try` hat mehrere catch-Blöcke. Warum gehört `catch (Exception e)` ans Ende?"
+    back: "**Sonst kompiliert das Programm nicht:** Ein späterer catch für einen Untertyp von `Exception` wäre nie erreichbar."
+    extra: "Die Reihenfolge zählt wie bei `else if`. Mit `e.getMessage()` bekommt man die Meldung der Exception."
+    source: "VL 9, Folie 25"
+    tags: [warum]
+
+  - id: gdp-vl09-019
+    type: cloze
+    text: "`sc.nextInt()` wirft bei der Eingabe „drei“ eine {{c1::`InputMismatchException`}}, `Integer.parseInt(\"drei\")` wirft eine {{c2::`NumberFormatException`}}."
+    extra: "„nextInt wirft eine NumberFormatException“ hört man oft, auch von KI. Ein Testprogramm mit fünf Zeilen klärt die Frage."
+    source: "VL 9, Folie 24, 32"
+
+  - id: gdp-vl09-020
+    type: basic
+    front: "Häufige Exceptions: Welche Exception gehört in die markierte Zelle?"
+    back: "**`ArithmeticException`**"
+    extra: "Ganzzahlige Division durch 0 (`5 / 0` mit int). Wie alle Exceptions in dieser Tabelle ist sie unchecked: Besser vorher prüfen als hinterher fangen."
+    figure: "gdp-vl09-020.png"
+    figure_back: "gdp-vl09-020-back.png"
+    source: "VL 9, Folie 24"
+
+  - id: gdp-vl09-021
+    type: basic
+    front: "Was unterscheidet in Java eine **checked** Exception (z. B. `IOException`) von einer **unchecked** (z. B. `NumberFormatException`)?"
+    back: "**Bei checked verlangt der Compiler `try/catch` oder `throws`, sonst kompiliert das Programm nicht. Bei unchecked nicht.**"
+    extra: "Checked: Störungen von außen, die auch in einem korrekten Programm passieren (Datei fehlt, Netz weg). Unchecked: meist Programmierfehler."
+    source: "VL 9, Folie 24, 26"
+
+  - id: gdp-vl09-022
+    type: code
+    kind: bug
+    prompt: "Der Code steht in einem `main` ohne `throws`. Warum kompiliert Zeile 1 nicht?"
+    code: |
+      Scanner datei = new Scanner(Path.of("zimmer.txt"));
+      while (datei.hasNextLine()) {
+          System.out.println(datei.nextLine());
+      }
+    run: |
+      import java.util.Scanner;
+      import java.nio.file.Path;
+      public class Main {
+          public static void main(String[] args) {
+      {code}
+          }
+      }
+    expect: compile_error
+    error_contains: "must be caught or declared to be thrown"
+    answer: "**Das Öffnen der Datei kann eine checked `IOException` werfen. Man muss sie mit `try/catch` fangen oder mit `throws` im Methodenkopf angeben.**"
+    explanation: "javac: „unreported exception IOException; must be caught or declared to be thrown“. Eclipse: „Unhandled exception type IOException“. Lösung mit try-with-resources: `try (Scanner datei = new Scanner(Path.of(\"zimmer.txt\"))) { … } catch (IOException e) { … }`. Die Datei wird am Ende von selbst geschlossen."
+    source: "VL 9, Folie 26"
+
+  - id: gdp-vl09-023
+    type: basic
+    front: "Was ist falsch an einem leeren catch-Block `catch (NumberFormatException e) { }`?"
+    back: "**Er verschluckt die Exception und versteckt so den Fehler.** Mindestens eine Meldung ausgeben."
+    extra: "Weitere Regeln: genau fangen (NumberFormatException statt Exception) und vorher prüfen (`!= null`, `i < liste.size()`, `hasNextInt()`)."
+    source: "VL 9, Folie 27"
+
+  # ---------------------------------------------------------------- Robust einlesen
+  - id: gdp-vl09-024
+    type: code
+    kind: fill
+    prompt: "Eingabe: `drei`, dann `3`. Ergänzen Sie den catch-Block, sodass das Programm nachfragt, statt endlos zu laufen."
+    code: |
+      Scanner sc = new Scanner(System.in);
+      int n;
+      while (true) {
+          System.out.print("Nächte? ");
+          try {
+              n = sc.nextInt();
+              break;
+          } catch (InputMismatchException e) {
+              System.out.println("Bitte eine Zahl.");
+              {{c1::sc.next();}}
+          }
+      }
+      System.out.println("Gebucht: " + n);
+    run: |
+      import java.util.*;
+      public class Main {
+          public static void main(String[] args) {
+      {code}
+          }
+      }
+    stdin: "drei\n3\n"
+    answer: |
+      Nächte? Bitte eine Zahl.
+      Nächte? Gebucht: 3
+    explanation: "`sc.next()` verwirft das falsche Wort. Java kann nicht zur Fehlerstelle zurückspringen, darum fragt die Schleife erneut; `break` verlässt sie, sobald eine Zahl kam."
+    source: "VL 9, Folie 29"
+
+  - id: gdp-vl09-025
+    type: basic
+    front: "Eine KI-Eingabeschleife fängt `InputMismatchException`, gibt „Bitte eine Zahl.“ aus und fragt erneut, ruft aber kein `sc.next()` auf. Was passiert bei der Eingabe „drei“, und warum?"
+    back: "**Endlosschleife:** `nextInt` lässt das falsche Wort liegen, der nächste Versuch liest es wieder und scheitert wieder."
+    extra: "Manche Vorschläge, auch von agentischen Werkzeugen, testen nur den Erfolgsfall. Ein einziger Test mit absichtlich falscher Eingabe findet den Fehler."
+    source: "VL 9, Folie 31"
+
+  - id: gdp-vl09-026
+    type: code
+    kind: predict
+    prompt: "Eingabe: `5`, `3`, `0` (je mit Enter). Was gibt das Programm aus?"
+    code: |
+      Scanner sc = new Scanner(System.in);
+      int summe = 0;
+      int zahl;
+      do {
+          zahl = sc.nextInt();
+          summe += zahl;
+      } while (zahl != 0);
+      System.out.println("Summe: " + summe);
+    run: |
+      import java.util.Scanner;
+      public class Main {
+          public static void main(String[] args) {
+      {code}
+          }
+      }
+    stdin: "5\n3\n0\n"
+    answer: "Summe: 8"
+    explanation: "do-while passt, weil man erst lesen muss, bevor man prüfen kann. Die 0 wird mit addiert, das stört nicht. `summe` ist ein Sammler."
+    source: "VL 9, Folie 30"

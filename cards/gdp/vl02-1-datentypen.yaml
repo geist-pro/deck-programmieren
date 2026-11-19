@@ -1,0 +1,277 @@
+lecture:
+  id: gdp-vl02-1
+  deck: "VL 02.1 Datentypen & erstes Programm"
+  header: "GdP · VL 2.1 Datentypen"
+  lang: de
+cards:
+  # ---------------------------------------------------------------- Das erste Programm
+  - id: gdp-vl02-1-001
+    type: cloze
+    text: "In Java steht jedes Programm in einer {{c1::Klasse}}. Die Datei muss genauso heißen wie {{c2::die öffentliche Klasse}}: `public class Hotel` gehört in `Hotel.java`."
+    extra: "Auch die Großschreibung muss stimmen: großes H im Code und im Dateinamen."
+    source: "VL 2.1, Folie 4"
+
+  - id: gdp-vl02-1-002
+    type: basic
+    front: "Wozu dient die Methode `main` in einem Java-Programm?"
+    back: "**Sie ist der Einstiegspunkt: Beim Start sucht Java genau diese Methode und beginnt dort.**"
+    extra: "Die Zeile `public static void main(String[] args)` schreibt man am Anfang genau so ab. `static` und `String[] args` kommen später."
+    source: "VL 2.1, Folie 4"
+
+  - id: gdp-vl02-1-003
+    type: cloze
+    text: "In Java endet jede Anweisung mit {{c1::einem Semikolon}}. Die Einrückung ignoriert {{c2::der Compiler}}; für Menschen zeigt sie, wo eine Klammer fehlt."
+    extra: "Nach der Klassenzeile und der `main`-Zeile steht kein Semikolon, sondern eine geschweifte Klammer. Eingerückt wird um eine Stufe pro Ebene (in Eclipse ein Tab der Breite 4); Strg+Umschalt+F formatiert automatisch."
+    source: "VL 2.1, Folie 5"
+
+  - id: gdp-vl02-1-004
+    type: code
+    kind: predict
+    prompt: "Was gibt dieses Programm aus?"
+    code: |
+      System.out.println("Hallo");
+      System.out.println("3" + 4);
+    answer: |
+      Hallo
+      34
+    explanation: "Die 3 steht in Anführungszeichen, ist also ein String. String plus Zahl ergibt einen String: Die 4 wird angehängt. `println(3 + 4)` ohne Anführungszeichen gäbe 7 aus."
+    source: "VL 2.1, Folie 6–7"
+
+  - id: gdp-vl02-1-005
+    type: basic
+    front: "Ein Kommentar im Code kann sagen, *was* passiert oder *warum* es passiert. Was davon gehört hinein?"
+    back: "**Warum etwas passiert.** Was passiert, sieht man meistens am Code."
+    extra: "`//` macht einen Kommentar bis zum Zeilenende, `/* … */` geht über mehrere Zeilen. Der Compiler überspringt beide."
+    source: "VL 2.1, Folie 8"
+
+  # ---------------------------------------------------------------- Vom Text zum Programm
+  - id: gdp-vl02-1-006
+    type: basic
+    front: "Warum kann der Prozessor `Hotel.java` nicht direkt ausführen?"
+    back: "**Die CPU versteht nur Maschinencode.** Java muss deshalb übersetzt werden."
+    extra: "Drei Ebenen für dasselbe 'a': Maschinencode `10110000 01100001` (für den Prozessor), Assembler `mov al, 61h` (für Fachleute, nur eine CPU-Familie), Hochsprache `char c = 'a';` (für Menschen, alle Plattformen)."
+    source: "VL 2.1, Folie 10"
+
+  - id: gdp-vl02-1-007
+    type: basic
+    front: "Übersetzen: Was ist der Unterschied zwischen einem **Compiler** und einem **Interpreter**?"
+    back: "**Der Compiler übersetzt das ganze Programm einmal vorab. Der Interpreter übersetzt Schritt für Schritt, während das Programm läuft.**"
+    extra: "Compiler wie ein Buchübersetzer: schnell, aber das Ergebnis passt nur für eine Plattform. Interpreter wie ein Simultandolmetscher: läuft überall mit Interpreter, ist aber langsamer."
+    source: "VL 2.1, Folie 11"
+
+  - id: gdp-vl02-1-008
+    type: basic
+    front: "So läuft ein Java-Programm: Welches Werkzeug arbeitet im verdeckten Schritt 2, und was tut es?"
+    back: "**`javac`, der Compiler: Er prüft `Hotel.java` und übersetzt es.**"
+    extra: "Hier fallen Tippfehler auf, bevor irgendetwas läuft. Eclipse übersetzt mit einem eigenen Compiler, schon beim Speichern."
+    figure: "gdp-vl02-1-008.png"
+    figure_back: "gdp-vl02-1-008-back.png"
+    source: "VL 2.1, Folie 12"
+
+  - id: gdp-vl02-1-009
+    type: basic
+    front: "So läuft ein Java-Programm: Welche Datei entsteht im verdeckten Schritt 3, was steht darin, und für wen ist sie gedacht?"
+    back: "**`Hotel.class` mit Bytecode, gedacht für die JVM, nicht für Menschen.**"
+    extra: "Diese Datei öffnet und bearbeitet man nie von Hand. `java Hotel` startet die JVM, die den Bytecode ausführt."
+    figure: "gdp-vl02-1-009.png"
+    figure_back: "gdp-vl02-1-009-back.png"
+    source: "VL 2.1, Folie 12"
+
+  - id: gdp-vl02-1-010
+    type: cloze
+    text: "Die JVM übersetzt häufig genutzten Bytecode während der Laufzeit zusätzlich in Maschinencode. Das heißt {{c1::Just-in-time-Kompilierung (JIT)}}."
+    extra: "Deshalb ist Java nicht langsam. „Write once, run anywhere“: Dieselbe `.class`-Datei läuft auf Windows, macOS und Linux, überall mit JVM."
+    source: "VL 2.1, Folie 12"
+
+  # ---------------------------------------------------------------- Variablen und Datentypen
+  - id: gdp-vl02-1-011
+    type: basic
+    front: "Im Speicher steht `01100001`. Das kann die Zahl 97 sein oder der Buchstabe 'a'. Was legt fest, welches von beiden gemeint ist?"
+    back: "**Der Datentyp.**"
+    extra: "Die Bits sehen gleich aus. Darum hat jede Variable einen Typ, und darum haben Typen Grenzen."
+    source: "VL 2.1, Folie 14"
+
+  - id: gdp-vl02-1-012
+    type: cloze
+    text: "In `int zimmerNummer = 12;` ist `int` der {{c1::Typ}} (welche Werte erlaubt sind), `zimmerNummer` der {{c2::Name}} und `12` der {{c3::Wert}}."
+    source: "VL 2.1, Folie 15"
+
+  - id: gdp-vl02-1-013
+    type: basic
+    front: "Eine Variable wird oft als Etikett beschrieben, das auf einem Wert klebt. Welche Fehlvorstellung soll dieses Bild verhindern?"
+    back: "**Dass eine Variable nach einer neuen Zuweisung alten und neuen Wert zugleich enthält.**"
+    extra: "Nach `zimmerNummer = 14;` ist die 12 weg. Genauer ist eine Variable ein Speicherplatz (VL 2.2): Eine Zuweisung ersetzt den alten Wert."
+    source: "VL 2.1, Folie 15"
+    tags: [warum]
+
+  - id: gdp-vl02-1-014
+    type: cloze
+    text: "Java-Typen für Zeichen und Text: `char` speichert {{c1::genau ein Zeichen in einfachen Anführungszeichen}} (`'P'`), `String` speichert {{c2::Text in doppelten Anführungszeichen}} (`\"Kino\"`)."
+    extra: "`String` ist eine Klasse und wird deshalb großgeschrieben. `int`, `long`, `double`, `boolean`, `char` sind einfache Datentypen, kleingeschrieben."
+    source: "VL 2.1, Folie 16"
+
+  - id: gdp-vl02-1-015
+    type: code
+    kind: error
+    prompt: "Eclipse meldet zu Zeile 1 `The literal 8000000000 of type int is out of range` (javac: `integer number too large`). Was ist die Ursache, und wie behebt man sie?"
+    code: |
+      long weltbevoelkerung = 8000000000;
+      System.out.println(weltbevoelkerung);
+    expect: compile_error
+    error_contains: "integer number too large"
+    answer: "**Ohne `L` ist eine Zahl im Code ein `int`, und 8 Milliarden passen nicht in einen `int`.** Lösung: `8000000000L`."
+    explanation: "`int` reicht bis rund ±2,1 Milliarden, `long` bis rund 9,2 Trillionen. Dass die Variable links ein `long` ist, hilft dem Literal rechts nicht."
+    source: "VL 2.1, Folie 16"
+
+  - id: gdp-vl02-1-016
+    type: cloze
+    text: "Den Typ nach der Bedeutung wählen: Eine Anzahl ist ein {{c1::`int`}}, ein Preis ein {{c2::`double`}}, „läuft der Film in 3D?“ ein {{c3::`boolean`}}."
+    extra: "`byte`, `short` und `float` braucht man selten. Kommazahlen schreibt man mit Punkt: `62.5`."
+    source: "VL 2.1, Folie 16"
+
+  - id: gdp-vl02-1-017
+    type: cloze
+    text: "`int gaeste;` {{c1::deklariert}} die Variable (Name und Typ, noch kein Wert). `gaeste = 2;` {{c2::initialisiert}} sie (erste Zuweisung)."
+    extra: "Meistens beides in einer Zeile: `int gaeste = 2;`."
+    source: "VL 2.1, Folie 17"
+
+  - id: gdp-vl02-1-018
+    type: basic
+    front: "In der Mathematik wäre `gaeste = gaeste + 1` ein Widerspruch. Wie liest man das `=` in Java?"
+    back: "**Als „bekommt den Wert“, nicht als „ist gleich“.**"
+    extra: "Java rechnet rechts mit dem alten Wert (2 + 1) und klebt das Etikett `gaeste` auf das Ergebnis 3."
+    source: "VL 2.1, Folie 17"
+
+  - id: gdp-vl02-1-019
+    type: code
+    kind: predict
+    prompt: "Was gibt dieses Programm aus?"
+    code: |
+      int max = 10;
+      int total = max + 12;
+      max = 20;
+      System.out.println(total);
+    answer: "22"
+    explanation: "Zeile 2 rechnet einmal mit dem Wert, den `max` in diesem Moment hat, und speichert 22. Java ist keine Tabellenkalkulation: `total` rechnet nicht neu, wenn sich `max` ändert."
+    source: "VL 2.1, Folie 18"
+
+  - id: gdp-vl02-1-020
+    type: code
+    kind: predict
+    prompt: "Was gibt dieses Programm aus?"
+    code: |
+      int gaeste = 2;
+      gaeste = gaeste + 1;
+      double preis = 89.90;
+      System.out.println(gaeste + " Gäste, " + preis + " Euro");
+    answer: "3 Gäste, 89.9 Euro"
+    explanation: "Ein `double` merkt sich keine Nullen am Ende: Aus `89.90` wird `89.9`."
+    source: "VL 2.1, Folie 17"
+
+  - id: gdp-vl02-1-021
+    type: code
+    kind: error
+    prompt: "Eclipse meldet zu Zeile 2: `The local variable gaeste may not have been initialized`. Was ist die Ursache?"
+    code: |
+      int gaeste;
+      System.out.println(gaeste);
+    expect: compile_error
+    error_contains: "might not have been initialized"
+    answer: "**`gaeste` wird gelesen, bevor sie einen Wert bekommen hat.**"
+    explanation: "Die Variable ist nur deklariert, nicht initialisiert. Lösung z. B. `int gaeste = 2;`. Ein typischer Anfängerfehler. `javac` meldet dasselbe als „might not have been initialized“."
+    source: "VL 2.1, Folie 19"
+
+  - id: gdp-vl02-1-022
+    type: code
+    kind: bug
+    prompt: "Warum kompiliert Zeile 2 nicht?"
+    code: |
+      final int MAX_GAESTE = 4;
+      MAX_GAESTE = 5;
+    expect: compile_error
+    error_contains: "final"
+    answer: "**`MAX_GAESTE` ist mit `final` deklariert. `final` verhindert jede spätere Zuweisung.**"
+    explanation: "So entsteht eine Konstante. Konstanten schreibt man komplett groß, Wörter mit Unterstrich getrennt."
+    source: "VL 2.1, Folie 17, 20"
+
+  - id: gdp-vl02-1-023
+    type: basic
+    front: "Eclipse zeigt fünf Fehlermeldungen auf einmal. Warum behebt man zuerst nur die erste?"
+    back: "**Ein einzelner Fehler erzeugt oft Folgefehler. Nach dem ersten Fix verschwinden die oft von selbst.**"
+    extra: "Zwei Fragen helfen immer: Wo (Datei, Zeile, rotes Symbol am Rand)? Was (Text der Meldung)? Erst selbst lesen, dann ggf. eine KI um Erklärung bitten."
+    source: "VL 2.1, Folie 19"
+    tags: [warum]
+
+  - id: gdp-vl02-1-024
+    type: cloze
+    text: "Java-Namenskonventionen: Variablen und Methoden {{c1::camelCase, vorne klein}} (`preisProNacht`), Klassen {{c2::vorne groß}} (`Hotel`), Konstanten {{c3::alles groß mit Unterstrich}} (`MAX_GAESTE`)."
+    extra: "Für alle Namen: keine Umlaute (`gaeste` statt `gäste`, sonst Ärger mit der Dateicodierung) und keine Leerzeichen."
+    source: "VL 2.1, Folie 20"
+
+  # ---------------------------------------------------------------- Rechnen
+  - id: gdp-vl02-1-025
+    type: cloze
+    text: "In Java liefert `%` {{c1::den Rest der ganzzahligen Division}}, z. B. `5 % 2` ergibt {{c2::1}}."
+    extra: "Mit Prozent hat `%` nichts zu tun. Typische Anwendung: `x % 2 == 0` prüft, ob `x` gerade ist."
+    source: "VL 2.1, Folie 22–23"
+
+  - id: gdp-vl02-1-026
+    type: code
+    kind: predict
+    prompt: "Was gibt dieses Programm aus?"
+    code: |
+      int a = 7;
+      int b = 2;
+      System.out.println(a / b);
+      System.out.println(a % b);
+    answer: |
+      3
+      1
+    explanation: "`int` durch `int` ergibt `int`: Der Nachkommateil wird abgeschnitten, nicht gerundet. `%` liefert den Rest: 7 = 3 · 2 + 1. Mit `a / 2.0` käme 3.5 heraus."
+    source: "VL 2.1, Folie 23"
+
+  - id: gdp-vl02-1-027
+    type: code
+    kind: predict
+    prompt: "Was gibt dieses Programm aus?"
+    code: |
+      System.out.println('a' + 1);
+    answer: "98"
+    explanation: "Ein `char` ist intern eine Zahl: 'a' hat den Code 97. `char` plus `int` ergibt einen `int`, also gibt `println` die Zahl aus, nicht das Zeichen 'b'."
+    source: "VL 2.1, Folie 24"
+
+  - id: gdp-vl02-1-028
+    type: code
+    kind: fill
+    prompt: "Setze Klammern so, dass 20 ausgegeben wird, ohne die Zahlen zu ändern."
+    code: |
+      System.out.println({{c1::(}}2 + 3{{c1::)}} * 4);
+    answer: "20"
+    explanation: "Ohne Klammern rechnet Java `2 + 3 * 4` = 14. Im Zweifel Klammern setzen: Sie kosten nichts und machen den Code lesbarer."
+    source: "VL 2.1, Folie 22"
+
+  - id: gdp-vl02-1-029
+    type: code
+    kind: predict
+    prompt: "Was gibt dieses Programm aus?"
+    code: |
+      boolean in3D = true;
+      String titel = "Der Marsianer";
+      int laenge = 141;
+      System.out.println(titel + " (" + laenge + " min, 3D: " + in3D + ")");
+    answer: "Der Marsianer (141 min, 3D: true)"
+    explanation: "Weil links ein String steht, hängt jedes `+` an, auch der `boolean` wird als Text „true“ angehängt. Die Leerzeichen kommen nur aus den Anführungszeichen: ohne das Leerzeichen vor „min“ stünde „141min“ da."
+    source: "VL 2.1, Folie 25"
+
+  - id: gdp-vl02-1-030
+    type: code
+    kind: bug
+    prompt: "20 Bonbons à 0,25 Euro. Warum kompiliert Zeile 2 nicht?"
+    code: |
+      int bonbons = 20;
+      int preis = 0.25;
+      System.out.println(bonbons * preis);
+    expect: compile_error
+    answer: "**0.25 ist eine Kommazahl und passt nicht in einen `int`.** Richtig: `double preis = 0.25;`."
+    explanation: "Ein typischer Fehler bei dieser Aufgabe. Ein zweiter: `0,25` mit Komma statt Punkt."
+    source: "VL 2.1, Folie 29"

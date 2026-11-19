@@ -1,0 +1,438 @@
+lecture:
+  id: gdp-vl10
+  deck: "VL 10 Vererbung"
+  header: "GdP · VL 10 Vererbung"
+  lang: de
+  support: |
+    class Raum {
+        int nummer;
+        public Raum(int nummer) {
+            this.nummer = nummer;
+        }
+        public String beschreibung() {
+            return "Raum " + nummer;
+        }
+    }
+    class Gaestezimmer extends Raum implements Buchbar {
+        int betten;
+        public Gaestezimmer(int nummer, int betten) {
+            super(nummer);
+            this.betten = betten;
+        }
+        @Override
+        public String beschreibung() {
+            return super.beschreibung() + ", " + betten + " Betten";
+        }
+        @Override
+        public double preis(int tage) {
+            return 89.0 * tage;
+        }
+    }
+    class Tagungsraum extends Raum {
+        int plaetze;
+        public Tagungsraum(int nummer, int plaetze) {
+            super(nummer);
+            this.plaetze = plaetze;
+        }
+        @Override
+        public String beschreibung() {
+            return "Tagungsraum " + nummer + " für " + plaetze;
+        }
+    }
+    class Suite extends Gaestezimmer {
+        public Suite(int nummer) {
+            super(nummer, 2);
+        }
+    }
+    interface Buchbar {
+        double preis(int tage);
+    }
+    class Leihrad implements Buchbar {
+        @Override
+        public double preis(int tage) {
+            return 12.0 * tage;
+        }
+    }
+cards:
+  # ---------------------------------------------------------------- Teil 1: Vererbung
+  - id: gdp-vl10-001
+    type: basic
+    front: "Mit welchem Test prüft man, ob Klasse B von Klasse A erben sollte?"
+    back: "**Mit dem „ist ein“-Test:** Ein B ist ein A. Ein Gästezimmer ist ein Raum, also `Gaestezimmer extends Raum`."
+    extra: "Nicht-Beispiel: Ein Raum ist kein Hotel. Ein Hotel **hat** Räume. „Hat ein“ heißt: ein Objekt als Attribut, keine Vererbung."
+    source: "VL 10, Folie 6"
+
+  - id: gdp-vl10-002
+    type: basic
+    front: "Klassenhierarchie im Hotel: Von welcher Klasse (markiert) erbt `Raum`, obwohl in `Raum` kein `extends` steht?"
+    back: "**`Object`**"
+    extra: "Jede Klasse ohne `extends` erbt automatisch von `Object`. Die Pfeile zeigen wie in UML zur Oberklasse."
+    figure: "gdp-vl10-002.png"
+    figure_back: "gdp-vl10-002-back.png"
+    source: "VL 10, Folie 6"
+
+  - id: gdp-vl10-003
+    type: cloze
+    text: "Vererbung ist {{c1::transitiv}}: Eine `Suite` ist ein `Gaestezimmer` und damit auch ein {{c2::`Raum`}}."
+    extra: "Die Suite erbt alles von `Gaestezimmer` und damit auch alles von `Raum`."
+    source: "VL 10, Folie 6, 9"
+
+  - id: gdp-vl10-004
+    type: code
+    kind: bug
+    prompt: "`Raum` hat nur den Konstruktor `Raum(int nummer)`. Warum kompiliert die Unterklasse nicht?"
+    code: |
+      class Gaestezimmer extends Raum {
+          int betten;
+
+          public Gaestezimmer(int nummer, int betten) {
+              this.betten = betten;
+          }
+      }
+    run: |
+      public class Main {
+          public static void main(String[] args) { }
+      }
+      class Raum {
+          int nummer;
+          public Raum(int nummer) { this.nummer = nummer; }
+      }
+      {code}
+    support: ""
+    expect: compile_error
+    error_contains: "constructor Raum in class Raum cannot be applied to given types"
+    answer: "**Es fehlt der Aufruf `super(nummer);`.** Üblich ist er als erste Zeile im Konstruktor."
+    explanation: "Konstruktoren werden nicht vererbt. Ohne `super(...)` versucht Java `Raum()` ohne Parameter aufzurufen, und den gibt es nicht. Eclipse: „Implicit super constructor Raum() is undefined“. Bis Java 24 muss `super(...)` die erste Anweisung sein; seit Java 25 dürfen davor Anweisungen stehen."
+    source: "VL 10, Folie 8–9"
+
+  - id: gdp-vl10-005
+    type: cloze
+    text: "In Java hat jede Klasse außer `Object` genau {{c1::eine}} direkte Oberklasse (`extends`), kann aber {{c2::beliebig viele Interfaces}} implementieren."
+    extra: "Beispiel: `class Gaestezimmer extends Raum implements Buchbar`. Eine Oberklasse darf beliebig viele Unterklassen haben."
+    source: "VL 10, Folie 9, 27"
+
+  - id: gdp-vl10-006
+    type: basic
+    front: "Warum erlaubt Java nur **eine** Oberklasse (`class A extends B, C` geht nicht)?"
+    back: "**Schreiben zwei Oberklassen dieselbe Methode verschieden, wäre unklar, welche gilt.**"
+    extra: "Für „mehrere Typen“ gibt es in Java Interfaces."
+    source: "VL 10, Folie 9"
+    tags: [warum]
+
+  - id: gdp-vl10-007
+    type: code
+    kind: bug
+    prompt: "Welche Zeile kompiliert nicht, und warum?"
+    code: |
+      Raum r = new Gaestezimmer(12, 2);
+      Gaestezimmer g = new Suite(30);
+      Object o = new Tagungsraum(3, 40);
+      Suite s = new Gaestezimmer(14, 1);
+    expect: compile_error
+    error_contains: "incompatible types"
+    answer: "**Zeile 4: Nicht jedes Gästezimmer ist eine Suite.**"
+    explanation: "Faustregel: Links darf der allgemeinere Typ stehen, rechts der speziellere. Zeile 3 ist erlaubt, denn jede Klasse erbt von `Object`. Eclipse: „Type mismatch: cannot convert from Gaestezimmer to Suite“."
+    source: "VL 10, Folie 10"
+
+  - id: gdp-vl10-008
+    type: cloze
+    text: "In `Raum r = new Gaestezimmer(12, 2);` ist `Raum` der {{c1::statische}} Typ (Typ der Variable) und `Gaestezimmer` der {{c2::dynamische}} Typ (Typ des Objekts)."
+    extra: "Der statische Typ steht links, damit prüft der Compiler. Der dynamische entsteht mit `new`; das Objekt bleibt immer ein Gästezimmer."
+    source: "VL 10, Folie 11"
+
+  # ---------------------------------------------------------------- Teil 2: Überschreiben
+  - id: gdp-vl10-009
+    type: basic
+    front: "Was ist der Unterschied zwischen **Überschreiben** und **Überladen** einer Methode?"
+    back: "**Überschreiben: gleiche Signatur in der Unterklasse, ersetzt die Methode der Oberklasse. Überladen: andere Parameter, es entsteht eine zweite Methode.**"
+    extra: "Signatur = Name + Parametertypen. Beim Überschreiben muss auch der Rückgabetyp passen. `super.beschreibung()` ruft die Fassung der Oberklasse auf."
+    source: "VL 10, Folie 13 (Überladen nur im Skript); VL 3, Folie 16–21"
+
+  - id: gdp-vl10-010
+    type: code
+    kind: predict
+    prompt: "Was gibt dieses Programm aus? In `Raum` liefert `beschreibung()` den Text `\"Raum \" + nummer`, in `Gaestezimmer` liefert sie `super.beschreibung() + \", \" + betten + \" Betten\"`."
+    code: |
+      Raum r = new Gaestezimmer(12, 2);
+      System.out.println(r.beschreibung());
+    answer: "Raum 12, 2 Betten"
+    explanation: "Zur Laufzeit läuft die Methode des Objekts, und das ist ein Gästezimmer. Der Typ links (`Raum`) entscheidet nur, ob der Aufruf erlaubt ist. Das heißt dynamisches Binden."
+    source: "VL 10, Folie 14"
+
+  - id: gdp-vl10-011
+    type: cloze
+    text: "Dynamisches Binden: Die Variable bestimmt, {{c1::was Sie aufrufen dürfen}}. Das Objekt bestimmt, {{c2::was passiert}}."
+    extra: "Der Compiler kennt nur den statischen Typ und prüft: Gibt es `beschreibung()` in `Raum`? Die JVM sieht den dynamischen Typ und ruft die Methode des Objekts auf."
+    source: "VL 10, Folie 15"
+
+  - id: gdp-vl10-012
+    type: code
+    kind: bug
+    prompt: "Das Objekt hat Betten. Warum kompiliert Zeile 3 trotzdem nicht?"
+    code: |
+      Raum r = new Gaestezimmer(12, 2);
+      System.out.println(r.beschreibung());
+      System.out.println(r.betten);
+    expect: compile_error
+    error_contains: "cannot find symbol"
+    answer: "**Der Compiler sieht nur den statischen Typ `Raum`, und `Raum` hat kein Attribut `betten`.**"
+    explanation: "Er weiß nicht, welches Objekt später an dem Raum-Etikett klebt. Eclipse: „betten cannot be resolved or is not a field“. Wer die Betten wirklich braucht, castet nach `Gaestezimmer`."
+    source: "VL 10, Folie 16"
+
+  - id: gdp-vl10-013
+    hold: "Gleiche Idee wie gdp-vl10-010 (dynamisches Binden); die Ausgabe hängt von drei Klassen ab, die die Karte nicht zeigt."
+    type: code
+    kind: predict
+    prompt: "Was gibt dieses Programm aus? (`Suite` überschreibt `beschreibung()` nicht.)"
+    code: |
+      ArrayList<Raum> raeume = new ArrayList<>();
+      raeume.add(new Gaestezimmer(12, 2));
+      raeume.add(new Tagungsraum(3, 40));
+      raeume.add(new Suite(30));
+      for (Raum r : raeume) {
+          System.out.println(r.beschreibung());
+      }
+    run: |
+      import java.util.ArrayList;
+      public class Main {
+          public static void main(String[] args) {
+      {code}
+          }
+      }
+    answer: |
+      Raum 12, 2 Betten
+      Tagungsraum 3 für 40
+      Raum 30, 2 Betten
+    explanation: "Jedes Objekt antwortet auf seine Art (Polymorphie). Für die Suite sucht Java von ihrer Klasse aus nach oben und findet `beschreibung()` in `Gaestezimmer`. Eine neue Raumart ändert die Schleife nicht."
+    source: "VL 10, Folie 17"
+
+  - id: gdp-vl10-014
+    type: code
+    kind: bug
+    prompt: "`System.out.println(new Raum(5))` soll „Raum 5“ ausgeben, zeigt aber etwas wie `Raum@1b6d3586`. Warum?"
+    code: |
+      class Raum {
+          int nummer;
+          Raum(int nummer) { this.nummer = nummer; }
+
+          public String toStrin() {
+              return "Raum " + nummer;
+          }
+      }
+    run: |
+      public class Main {
+          public static void main(String[] args) {
+              System.out.println(new Raum(5));
+          }
+      }
+      {code}
+    support: ""
+    expect: wrong_output
+    answer: "**Tippfehler `toStrin`: Das ist eine neue Methode, `toString()` von `Object` ist nicht überschrieben.**"
+    explanation: "`println(r)` ruft `r.toString()` auf. Mit `@Override` über der Methode hätte der Compiler den Tippfehler gemeldet. Eclipse: „The method toStrin() of type Raum must override or implement a supertype method“ (javac: „does not override or implement a method from a supertype“)."
+    source: "VL 10, Folie 18"
+
+  # ---------------------------------------------------------------- Teil 3: Abstrakt, Casting
+  - id: gdp-vl10-015
+    type: code
+    kind: bug
+    prompt: "Warum kompiliert Zeile 7 nicht?"
+    code: |
+      abstract class Raum {
+          int nummer;
+          public abstract double preisProTag();
+      }
+      public class Hotel {
+          public static void main(String[] args) {
+              Raum r = new Raum();
+          }
+      }
+    support: ""
+    expect: compile_error
+    error_contains: "is abstract; cannot be instantiated"
+    answer: "**Von einer abstrakten Klasse kann man kein Objekt erzeugen.** Nur von konkreten Unterklassen wie `Tagungsraum`."
+    explanation: "Niemand bucht einen „Raum“, gebucht wird ein Gästezimmer oder ein Tagungsraum. Eine abstrakte Klasse ist eine halbfertige Vorlage. Eclipse: „Cannot instantiate the type Raum“."
+    source: "VL 10, Folie 20"
+
+  - id: gdp-vl10-016
+    type: cloze
+    text: "Eine abstrakte Methode wie `public abstract double preisProTag();` hat {{c1::keinen Rumpf (Semikolon statt Klammern)}}. Jede konkrete Unterklasse {{c2::muss sie schreiben}}."
+    extra: "So legt `Raum` fest, dass jeder Raum einen Preis hat, aber nicht welchen. Eine abstrakte Klasse darf trotzdem normale Attribute, Methoden und Konstruktoren haben."
+    source: "VL 10, Folie 20"
+
+  - id: gdp-vl10-017
+    type: cloze
+    text: "Casting: Nach oben (`Gaestezimmer` → `Raum`) geht es {{c1::immer und automatisch}}, nach unten (`Raum` → `Gaestezimmer`) nur {{c2::mit Cast: `(Gaestezimmer) r`}}. Ein Cast ändert nie {{c3::das Objekt}}, nur das Etikett."
+    extra: "Der Cast nach unten ist ein Versprechen an den Compiler: „Das ist ein Gästezimmer.“"
+    source: "VL 10, Folie 21"
+
+  - id: gdp-vl10-018
+    type: code
+    kind: error
+    prompt: "Das Programm kompiliert, bricht aber in Zeile 2 mit `ClassCastException` ab. Warum lässt der Compiler den Cast zu, und warum scheitert er?"
+    code: |
+      Raum r = new Tagungsraum(3, 40);
+      Gaestezimmer g = (Gaestezimmer) r;
+      System.out.println(g.betten);
+    expect: runtime_error
+    error_contains: "ClassCastException"
+    answer: "**Der Compiler kennt nur das Etikett `Raum`, und ein Raum könnte ein Gästezimmer sein. Zur Laufzeit ist das Objekt aber ein Tagungsraum.**"
+    explanation: "Das Versprechen des Casts war falsch. Bis zu `g.betten` kommt das Programm gar nicht, also auch nicht zu einem Default-Wert 0. Sicher: erst mit `instanceof` prüfen, dann casten."
+    source: "VL 10, Folie 22"
+
+  - id: gdp-vl10-019
+    type: code
+    kind: predict
+    prompt: "Was gibt dieses Programm aus? (Der Konstruktor `Suite(int nummer)` ruft `super(nummer, 2)` auf, die Suite hat also 2 Betten.)"
+    code: |
+      ArrayList<Raum> raeume = new ArrayList<>();
+      raeume.add(new Gaestezimmer(12, 2));
+      raeume.add(new Tagungsraum(3, 40));
+      raeume.add(new Suite(30));
+      for (Raum r : raeume) {
+          if (r instanceof Gaestezimmer g) {
+              System.out.println(g.betten + " Betten");
+          }
+      }
+    run: |
+      import java.util.ArrayList;
+      public class Main {
+          public static void main(String[] args) {
+      {code}
+          }
+      }
+    answer: |
+      2 Betten
+      2 Betten
+    explanation: "`instanceof` ist true für das Gästezimmer und die Suite (eine Suite ist auch ein Gästezimmer), false für den Tagungsraum. Mit Pattern Matching (`… g`) braucht man keinen Cast mehr. Für `null` liefert `instanceof` immer false."
+    source: "VL 10, Folie 23"
+
+  - id: gdp-vl10-020
+    type: code
+    kind: bug
+    prompt: "`r` ist eine Suite, ausgegeben wird aber „Zimmer“. Was ist falsch?"
+    code: |
+      Raum r = new Suite(30);
+      if (r instanceof Gaestezimmer) {
+          System.out.println("Zimmer");
+      } else if (r instanceof Suite) {
+          System.out.println("Suite");
+      } else if (r instanceof Tagungsraum) {
+          System.out.println("Tagung");
+      }
+    expect: wrong_output
+    wrong_output: "Zimmer"
+    answer: "**Die Reihenfolge: Eine Suite ist auch ein Gästezimmer, deshalb trifft schon der erste Zweig.** `Suite` muss vor `Gaestezimmer` stehen."
+    explanation: "Besser ganz ohne Kette: `r.beschreibung()`. Jede Klasse kennt ihr eigenes Verhalten, eine neue Raumart braucht keinen neuen Zweig."
+    source: "VL 10, Folie 24"
+
+  - id: gdp-vl10-021
+    type: basic
+    front: "KI-Code unterscheidet Raumarten mit einer `instanceof`-Kette („ist es eine Suite …, sonst ein Gästezimmer …, sonst ein Tagungsraum …“). Was ist meist die bessere Lösung?"
+    back: "**Eine überschriebene Methode aufrufen, etwa `r.beschreibung()`.** Die Frage dazu: Gehört das als Methode in die Klasse?"
+    extra: "Dann entscheidet dynamisches Binden, und eine neue Raumart braucht keinen neuen Zweig. `instanceof` bleibt für Sonderfälle."
+    source: "VL 10, Folie 24"
+
+  # ---------------------------------------------------------------- Teil 4: Interfaces
+  - id: gdp-vl10-022
+    type: basic
+    front: "Das Hotel verleiht auch Fahrräder. Warum ist `Leihrad extends Raum` falsch, und was passt stattdessen?"
+    back: "**Ein Leihrad ist kein Raum (der „ist ein“-Test scheitert). Gemeinsam ist eine Fähigkeit, „kann gebucht werden“: ein Interface `Buchbar`.**"
+    extra: "`public interface Buchbar { double preis(int tage); }` und `class Leihrad implements Buchbar`."
+    source: "VL 10, Folie 26–27"
+
+  - id: gdp-vl10-023
+    type: code
+    kind: bug
+    prompt: "Warum kompiliert `Leihrad` nicht?"
+    code: |
+      interface Buchbar {
+          double preis(int tage);
+      }
+
+      class Leihrad implements Buchbar {
+          double preis(int tage) {
+              return 12.0 * tage;
+          }
+      }
+    run: |
+      public class Main {
+          public static void main(String[] args) { }
+      }
+      {code}
+    support: ""
+    expect: compile_error
+    error_contains: "weaker access privileges"
+    answer: "**Interface-Methoden ohne Sichtbarkeitsangabe sind automatisch `public`. In der Klasse fehlt `public`, das würde die Sichtbarkeit verringern.**"
+    explanation: "Richtig: `public double preis(int tage)`. Eclipse: „Cannot reduce the visibility of the inherited method from Buchbar“. Ein typischer Fehler mit Interfaces."
+    source: "VL 10, Folie 27"
+
+  - id: gdp-vl10-024
+    type: code
+    kind: predict
+    prompt: "Was gibt dieses Programm aus? (Gästezimmer: 89 € pro Tag, Leihrad: 12 € pro Tag, beide `implements Buchbar`.)"
+    code: |
+      ArrayList<Buchbar> korb = new ArrayList<>();
+      korb.add(new Gaestezimmer(12, 2));
+      korb.add(new Leihrad());
+      double summe = 0;
+      for (Buchbar b : korb) {
+          summe += b.preis(3);
+      }
+      System.out.println(summe);
+    run: |
+      import java.util.ArrayList;
+      public class Main {
+          public static void main(String[] args) {
+      {code}
+          }
+      }
+    answer: "303.0"
+    explanation: "3 · 89 = 267 plus 3 · 12 = 36. Der Korb kennt nur `Buchbar`; welche `preis`-Methode läuft, entscheidet das Objekt. Dynamisches Binden über ein Interface."
+    source: "VL 10, Folie 28"
+
+  - id: gdp-vl10-025
+    type: basic
+    front: "Faustregel: Wann nimmt man eine abstrakte Klasse, wann ein Interface?"
+    back: "**Gemeinsamer Code („ist ein“): abstrakte Klasse. Gemeinsame Fähigkeit („kann“) ohne gemeinsamen Code: Interface.**"
+    extra: "Jede Klasse außer `Object` hat genau eine Oberklasse, aber beliebig viele Interfaces. Ein Interface hat keine Instanzattribute, nur Konstanten."
+    figure_back: "gdp-vl10-025.png"
+    source: "VL 10, Folie 29"
+
+  - id: gdp-vl10-026
+    type: cloze
+    text: "`List<String> namen = new ArrayList<>();`: Der statische Typ ist {{c1::das Interface `List`}}. Vorteil: Man kann später {{c2::eine andere Implementierung wie `LinkedList`}} einsetzen, ohne den Rest zu ändern."
+    extra: "Das heißt Programmieren gegen das Interface: `ArrayList` implementiert `List`."
+    source: "VL 10, Folie 29"
+
+  - id: gdp-vl10-027
+    type: basic
+    front: "BlackJack mit Vererbung: Warum ist die Oberklasse `Teilnehmer` (mit Hand und `willKarte()`) abstrakt?"
+    back: "**Es gibt keinen Teilnehmer, der weder Spieler noch Dealer ist.**"
+    extra: "`willKarte()` ist abstrakt: Der Dealer will eine Karte, solange seine Summe höchstens 16 ist; der Spieler fragt an der Tastatur. Der Spielablauf ruft nur `t.willKarte()` auf, egal wer `t` ist."
+    source: "VL 10, Folie 30"
+
+  - id: gdp-vl10-028
+    type: code
+    kind: bug
+    prompt: "`Raum` ist jetzt abstrakt. Warum kompiliert `Tagungsraum` nicht?"
+    code: |
+      abstract class Raum {
+          int nummer;
+          public abstract double preisProTag();
+      }
+
+      class Tagungsraum extends Raum {
+          int plaetze;
+      }
+    run: |
+      public class Main {
+          public static void main(String[] args) { }
+      }
+      {code}
+    support: ""
+    expect: compile_error
+    error_contains: "does not override abstract method preisProTag()"
+    answer: "**`Tagungsraum` schreibt die abstrakte Methode `preisProTag()` nicht.** Eine konkrete Unterklasse muss jede abstrakte Methode der Oberklasse schreiben."
+    explanation: "Richtig: `@Override public double preisProTag() { return 300.0; }`. Die andere Möglichkeit wäre, auch `Tagungsraum` abstrakt zu machen; dann kann man aber keinen Tagungsraum erzeugen."
+    source: "VL 10, Folie 20"

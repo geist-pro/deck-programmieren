@@ -1,0 +1,29 @@
+name: check
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "25"
+      - run: pip install -r requirements.txt
+      - name: Check cards
+        run: python3 tools/check_cards.py
+      - name: Build deck and preview
+        run: python3 tools/build_deck.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: deck-and-preview
+          path: |
+            out/*.apkg
+            preview/

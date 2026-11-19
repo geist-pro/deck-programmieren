@@ -1,0 +1,409 @@
+lecture:
+  id: gdp-vl06-07
+  deck: "VL 06–07 Schleifen & Verzweigungen"
+  header: "GdP · VL 6–7 Schleifen"
+  lang: de
+  support: |
+    class Zimmer {
+        int nummer;
+        int betten;
+        double preisProNacht;
+        boolean belegt = false;
+        Zimmer(int nummer, int betten, double preisProNacht) {
+            this.nummer = nummer;
+            this.betten = betten;
+            this.preisProNacht = preisProNacht;
+        }
+    }
+cards:
+  # ---------------------------------------------------------------- Teil 1: Schleifen
+  - id: gdp-vl06-07-001
+    type: cloze
+    text: "In `for (int i = 0; i < 3; i++)` läuft der Start `int i = 0` {{c1::einmal, ganz am Anfang}}. Die Bedingung `i < 3` wird {{c2::vor jedem Durchlauf}} geprüft, der Schritt `i++` läuft {{c3::nach jedem Durchlauf}}."
+    extra: "Laut gelesen: „Setze i auf 0. Solange i < 3 gilt: Rumpf ausführen, dann i um 1 erhöhen.“ Ist die Bedingung falsch, geht es nach der schließenden Klammer weiter."
+    source: "VL 6+7, Folie 6"
+
+  - id: gdp-vl06-07-002
+    type: basic
+    front: "Schleife `for (int i = 1; i <= 3; i++)`: Welchen Wert hat `i`, wenn die Bedingung zum letzten Mal geprüft wird?"
+    back: "**4.** Der Rumpf läuft für 1, 2 und 3; erst bei `i = 4` ist `i <= 3` falsch."
+    extra: "In der Trace-Tabelle ist das die letzte Zeile: „4, false: Ende“. Diese Zeile übersieht man leicht."
+    figure_back: "gdp-vl06-07-002.png"
+    source: "VL 6+7, Folie 7"
+
+  - id: gdp-vl06-07-003
+    type: cloze
+    text: "Eine Trace-Tabelle hat {{c1::eine Spalte pro Variable}} (dazu eine für die Bedingung) und {{c2::eine Zeile pro Durchlauf}}."
+    extra: "Ganz oben stehen die Startwerte. Mit Papier und Stift spielt man so den Computer und sagt die Ausgabe vorher."
+    source: "VL 6+7, Folie 7"
+
+  - id: gdp-vl06-07-004
+    type: code
+    kind: predict
+    prompt: "Was gibt dieses Programm aus?"
+    code: |
+      for (int i = 0; i < 10; i += 3) {
+          System.out.print(i + " ");
+      }
+    answer: "0 3 6 9"
+    explanation: "0, 3, 6 und 9 sind alle kleiner als 10. Dann wird `i` zu 12, die Bedingung ist falsch. Der Startwert 0 wird vor dem ersten Schritt ausgegeben."
+    source: "VL 6+7, Folie 8"
+
+  - id: gdp-vl06-07-005
+    type: code
+    kind: bug
+    prompt: "Die Schleife soll in Zehnerschritten zählen. Warum kompiliert sie nicht?"
+    code: |
+      for (int i = 0; i <= 30; i + 10) {
+          System.out.println(i);
+      }
+    expect: compile_error
+    error_contains: "not a statement"
+    answer: "**`i + 10` rechnet nur einen Wert aus und ändert `i` nicht.** Als Anweisung ist das kein gültiges Java."
+    explanation: "Richtig ist `i += 10` oder `i = i + 10`. Genauso gibt es `i -= 10` und `i *= 2`."
+    source: "VL 6+7, Folie 9"
+
+  - id: gdp-vl06-07-006
+    type: cloze
+    text: "Bei einer `ArrayList` heißt es {{c1::`liste.size()`}} und {{c2::`liste.get(i)`}}, beim Array {{c3::`a.length`}} und `a[i]`."
+    extra: "Bei beiden beginnt der Index bei 0. Die Bedingung heißt deshalb `i < liste.size()`, nicht `<=`."
+    source: "VL 6+7, Folie 10"
+
+  - id: gdp-vl06-07-007
+    type: basic
+    front: "Wann nimmt man in Java die for-Schleife mit Index statt der for-each-Schleife `for (Zimmer z : liste)`?"
+    back: "**Wenn man die Position braucht oder rückwärts laufen will.**"
+    extra: "for-each liest jedes Element genau einmal, ohne Index. Ohne Index gibt es auch weniger Fehler. Der Typ vor dem Doppelpunkt muss zum Typ der Elemente passen."
+    source: "VL 6+7, Folie 11"
+
+  - id: gdp-vl06-07-008
+    type: code
+    kind: error
+    prompt: "Das Programm gibt 12 und 7 aus und bricht dann mit `NullPointerException` ab. Was ist die Ursache?"
+    code: |
+      Zimmer[] plaetze = new Zimmer[4];
+      plaetze[0] = new Zimmer(12, 2, 89.0);
+      plaetze[1] = new Zimmer(7, 1, 64.5);
+      plaetze[3] = new Zimmer(23, 3, 77.0);
+      for (int i = 0; i < plaetze.length; i++) {
+          System.out.println(plaetze[i].nummer);
+      }
+    expect: runtime_error
+    error_contains: "NullPointerException"
+    answer: "**Platz 2 ist leer, dort steht `null`.** Von `null` kann man kein Attribut lesen."
+    explanation: "Die Meldung nennt sogar den Ausdruck, der `null` war (`plaetze[i]`), und das Feld (`nummer`). Lesen Sie zuerst die Meldung."
+    source: "VL 6+7, Folie 12"
+
+  - id: gdp-vl06-07-009
+    type: code
+    kind: fill
+    prompt: "Ergänzen Sie die Bedingung, sodass das Array mit Lücke ohne Absturz durchlaufen wird."
+    code: |
+      Zimmer[] plaetze = new Zimmer[4];
+      plaetze[0] = new Zimmer(12, 2, 89.0);
+      plaetze[1] = new Zimmer(7, 1, 64.5);
+      plaetze[3] = new Zimmer(23, 3, 77.0);
+      for (int i = 0; i < plaetze.length; i++) {
+          if ({{c1::plaetze[i] != null}}) {
+              System.out.println(plaetze[i].nummer);
+          }
+      }
+    answer: |
+      12
+      7
+      23
+    explanation: "Erst prüfen, dann zugreifen: `null` heißt kein Objekt. Das gilt auch in for-each: Auch dort kommt `null` als Element vorbei."
+    source: "VL 6+7, Folie 18"
+
+  # ---------------------------------------------------------------- Teil 2: Entscheiden
+  - id: gdp-vl06-07-010
+    type: basic
+    front: "Warum schreibt man nach `if` immer geschweifte Klammern, auch wenn nur eine Zeile folgt?"
+    back: "**Ohne Klammern gehört nur die nächste Zeile zum `if`.** Eine später eingefügte zweite Zeile läuft dann immer."
+    extra: "Das ergibt einen Fehler, den man kaum sieht. `if` ist eine Verzweigung, keine „if-Schleife“. Es wiederholt nichts."
+    source: "VL 6+7, Folie 13–14"
+    tags: [warum]
+
+  - id: gdp-vl06-07-011
+    type: cloze
+    text: "Bei `a && b` müssen {{c1::beide Seiten}} wahr sein, bei `a || b` reicht {{c2::mindestens eine Seite}}."
+    extra: "Mit `frei = 3`, `preis = 89.0`: `frei > 0 && preis < 100` ist true, `frei == 0 || preis < 50` ist false. `!` dreht das Ergebnis um. Beim Verknüpfen Klammern setzen."
+    source: "VL 6+7, Folie 15"
+
+  - id: gdp-vl06-07-012
+    type: code
+    kind: predict
+    prompt: "Was gibt dieses Programm aus?"
+    code: |
+      int naechte = 7;
+      if (naechte >= 3) {
+          System.out.println("10 % Rabatt");
+      } else if (naechte >= 7) {
+          System.out.println("20 % Rabatt");
+      } else {
+          System.out.println("kein Rabatt");
+      }
+    answer: "10 % Rabatt"
+    explanation: "Java prüft von oben nach unten, nach dem ersten Treffer ist Schluss. `7 >= 3` ist schon wahr. Darum muss `>= 7` oben stehen."
+    source: "VL 6+7, Folie 16"
+
+  - id: gdp-vl06-07-013
+    type: code
+    kind: predict
+    prompt: "Was gibt dieses Programm aus?"
+    code: |
+      String art = "Buffet";
+      switch (art) {
+          case "Buffet":
+              System.out.println("Standard-Buffet");
+          case "Continental":
+              System.out.println("Continental");
+              break;
+          default:
+              System.out.println("kein Frühstück");
+      }
+    answer: |
+      Standard-Buffet
+      Continental
+    explanation: "Nach `case \"Buffet\"` fehlt das `break`. Java läuft in den nächsten `case` weiter, bis zum ersten `break`. Das heißt Fall-through."
+    source: "VL 6+7, Folie 19"
+
+  - id: gdp-vl06-07-014
+    type: basic
+    front: "Welchen Fehler der klassischen switch-Form mit `case …:` verhindert die Pfeil-Schreibweise (`case \"Buffet\" -> \"Standard-Buffet\";`)?"
+    back: "**Den Fall-through durch ein vergessenes `break`:** Mit dem Pfeil steht jeder Fall für sich."
+    extra: "Außerdem liefert der switch-Ausdruck direkt einen Wert: `String text = switch (art) { … };` (ab Java 14)."
+    source: "VL 6+7, Folie 19"
+
+  - id: gdp-vl06-07-015
+    type: basic
+    front: "`\"Ada\" == \"Ada\"` ergibt in Java `true`. Warum vergleicht man Strings trotzdem immer mit `equals`?"
+    back: "**Gleiche Literale teilt Java, darauf darf man sich nicht verlassen. Text aus einer Eingabe oder Datei ist in der Regel ein neues Objekt, dann liefert `==` false.**"
+    extra: "KI-Code mit `==` für Strings kompiliert und sieht plausibel aus. `equals` beachtet Groß- und Kleinschreibung; `equalsIgnoreCase` nicht."
+    source: "VL 6+7, Folie 20"
+    tags: [warum]
+
+  # ---------------------------------------------------------------- Teil 3: Algorithmen
+  - id: gdp-vl06-07-016
+    type: code
+    kind: predict
+    prompt: "Was gibt dieses Programm aus?"
+    code: |
+      double[] preise = {89.0, 64.5, 77.0, 120.0};
+      int guenstig = 0;
+      double summe = 0;
+      for (double p : preise) {
+          if (p < 80) {
+              guenstig++;
+          }
+          summe += p;
+      }
+      System.out.println(guenstig + " unter 80 Euro");
+      System.out.println("Schnitt: " + summe / preise.length);
+    answer: |
+      2 unter 80 Euro
+      Schnitt: 87.625
+    explanation: "`guenstig` zählt nur im `if` (64.5 und 77.0), `summe` bekommt jeden Preis: 350.5 / 4 = 87.625."
+    source: "VL 6+7, Folie 23"
+
+  - id: gdp-vl06-07-017
+    type: cloze
+    text: "Zählen und Summieren: Der Startwert steht {{c1::vor der Schleife}}, die Änderung {{c2::in der Schleife}}, das Ergebnis (z. B. der Durchschnitt) kommt {{c3::nach der Schleife}}."
+    extra: "Wer `summe = 0` in die Schleife schreibt, setzt die Summe jedes Mal zurück."
+    source: "VL 6+7, Folie 23"
+
+  - id: gdp-vl06-07-018
+    type: code
+    kind: bug
+    prompt: "Das Programm soll den günstigsten Preis ausgeben, gibt aber `0.0` aus. Welche Zeile ist falsch, und warum?"
+    code: |
+      double[] preise = {89.0, 64.5, 77.0};
+      double min = 0;
+      for (int i = 0; i < preise.length; i++) {
+          if (preise[i] < min) {
+              min = preise[i];
+          }
+      }
+      System.out.println(min);
+    expect: wrong_output
+    wrong_output: "0.0"
+    answer: "**Zeile 2: `min` startet bei 0.** Kein Preis ist kleiner als 0, das `if` ist nie wahr."
+    explanation: "Richtig ist `double min = preise[0];`. Dann kann die Schleife bei `i = 1` starten. Für das Maximum dreht man nur den Vergleich um."
+    source: "VL 6+7, Folie 24, 36–37"
+
+  - id: gdp-vl06-07-019
+    type: code
+    kind: bug
+    prompt: "`finde(liste, 7)` liefert `null`, obwohl Zimmer 7 an zweiter Stelle der Liste steht. Warum?"
+    code: |
+      static Zimmer finde(ArrayList<Zimmer> liste, int nr) {
+          for (Zimmer z : liste) {
+              if (z.nummer == nr) {
+                  return z;
+              } else {
+                  return null;
+              }
+          }
+          return null;
+      }
+    run: |
+      import java.util.*;
+      public class Main {
+      {code}
+          public static void main(String[] args) {
+              ArrayList<Zimmer> liste = new ArrayList<>();
+              liste.add(new Zimmer(12, 2, 89.0));
+              liste.add(new Zimmer(7, 1, 64.5));
+              System.out.println(finde(liste, 7) == null ? "nicht gefunden" : "gefunden");
+          }
+      }
+    expect: wrong_output
+    wrong_output: "nicht gefunden"
+    answer: "**`return null` im `else` beendet die Methode schon beim ersten Zimmer (12).**"
+    explanation: "`return null` gehört nach die Schleife: Erst wenn alle Zimmer geprüft sind, steht fest, dass keins passt."
+    source: "VL 6+7, Folie 26"
+
+  - id: gdp-vl06-07-020
+    type: basic
+    front: "Eine Methode `finde` liefert ein `Zimmer` oder `null`. Was muss der Aufrufer tun, bevor er `z.preisProNacht` liest?"
+    back: "**Prüfen, ob `z == null` ist.**"
+    extra: "Ohne diese Prüfung gibt es beim Zugriff auf das Attribut eine `NullPointerException`, z. B. bei `finde(liste, 99)`, wenn es Zimmer 99 nicht gibt."
+    source: "VL 6+7, Folie 26"
+
+  - id: gdp-vl06-07-021
+    type: cloze
+    text: "Rollen von Variablen: Eine Variable, die vor der Schleife 0 ist und in der Schleife `+=` bekommt (z. B. `summe`), ist ein {{c1::Sammler}}."
+    extra: "Ein Zähler wie `guenstig` ist auch ein Sammler: Er bekommt +1, wenn die Bedingung stimmt. Rollen nach Sajaniemi."
+    source: "VL 6+7, Folie 23, 27"
+
+  - id: gdp-vl06-07-022
+    type: basic
+    front: "Welche Rolle hat die Variable `gefunden` bei der linearen Suche, und woran erkennt man sie?"
+    back: "**Flag:** Sie merkt sich, ob etwas passiert ist. Sie wird einmal `true` und bleibt dann so."
+    extra: "Weitere Rollen: Schrittzähler (`i`), Sammler (`summe`), Bester bisher (`min`), Festwert (`preise`)."
+    source: "VL 6+7, Folie 25, 27"
+
+  - id: gdp-vl06-07-023
+    type: basic
+    front: "Rollen von Variablen in Schleifen: Welche Rolle gehört in die markierte Zelle?"
+    back: "**Bester bisher**"
+    extra: "`min` merkt sich den besten Wert, den die Schleife bisher gesehen hat."
+    figure: "gdp-vl06-07-023.png"
+    figure_back: "gdp-vl06-07-023-back.png"
+    source: "VL 6+7, Folie 27"
+
+  - id: gdp-vl06-07-024
+    type: code
+    kind: predict
+    prompt: "Was gibt dieses Programm aus?"
+    code: |
+      int n = 0;
+      for (int i = 1; i <= 10; i *= 2) {
+          n++;
+      }
+      System.out.println(n);
+    answer: "4"
+    explanation: "`i` ist 1, 2, 4, 8, dann 16: Ende. Vier Durchläufe. „Von 1 bis 10“ klingt nach zehn, aber der Schritt verdoppelt."
+    source: "VL 6+7, Folie 28"
+
+  - id: gdp-vl06-07-025
+    type: code
+    kind: predict
+    prompt: "Was gibt dieses Programm aus?"
+    code: |
+      for (int i = 1; i <= 3; i++) {
+          for (int j = 1; j <= 3; j++) {
+              System.out.print(i * j + " ");
+          }
+          System.out.println();
+      }
+    answer: |
+      1 2 3
+      2 4 6
+      3 6 9
+    explanation: "Die innere Schleife läuft für jedes `i` komplett durch, `j` beginnt jedes Mal wieder bei 1. `print` schreibt ohne Zeilenumbruch, `println()` beendet die Zeile."
+    source: "VL 6+7, Folie 29"
+
+  # ---------------------------------------------------------------- Teil 4: Fehler finden
+  - id: gdp-vl06-07-026
+    type: basic
+    front: "Wann nimmt man in Java eine `while`-Schleife statt einer `for`-Schleife?"
+    back: "**Wenn das Ende von den Daten abhängt und die Anzahl der Durchläufe vorher unbekannt ist.**"
+    extra: "Beispiel: Wie viele Jahre, bis sich 1000 Euro bei 5 % Zinsen verdoppeln? `while (betrag < 2000)` → 15 Jahre. Jede for-Schleife lässt sich auch als while schreiben."
+    source: "VL 6+7, Folie 31"
+
+  - id: gdp-vl06-07-027
+    type: cloze
+    text: "`do { … } while (bedingung);` prüft die Bedingung {{c1::nach jedem Durchlauf}} und läuft deshalb {{c2::mindestens einmal}}."
+    extra: "`while` prüft vor jedem Durchlauf und kann auch null Mal laufen. Typisch für do-while: eine Eingabe, erst fragen, dann prüfen."
+    figure_back: "gdp-vl06-07-027.png"
+    source: "VL 6+7, Folie 32"
+
+  - id: gdp-vl06-07-028
+    type: code
+    kind: predict
+    prompt: "Was gibt dieses Programm aus?"
+    code: |
+      int x = 0;
+      while (x < 3) {
+          x = 5;
+          System.out.println("noch drin, x = " + x);
+      }
+    answer: "noch drin, x = 5"
+    explanation: "Die Bedingung wird nicht ständig überwacht, sondern nur am Anfang jedes Durchlaufs geprüft. Der Rumpf läuft immer zu Ende."
+    source: "VL 6+7, Folie 33"
+
+  - id: gdp-vl06-07-029
+    type: code
+    kind: bug
+    prompt: "Soll: 1 + 2 + … + 100 = 5050. Das Programm gibt 4950 aus. Was ist falsch?"
+    code: |
+      int summe = 0;
+      for (int i = 0; i < 100; i++) {
+          summe += i;
+      }
+      System.out.println(summe);
+    expect: wrong_output
+    wrong_output: "4950"
+    answer: "**`i < 100` lässt die 100 weg (Off-by-one).** Richtig ist `i <= 100`."
+    explanation: "Der Start bei 0 schadet hier nicht, 0 dazuzählen ändert nichts. Drei Fragen bei jeder Schleife: erster Wert? letzter Wert? Gehört die Grenze dazu?"
+    source: "VL 6+7, Folie 34"
+
+  - id: gdp-vl06-07-030
+    type: basic
+    front: "`for (int n = 1; n != 12; n += 2)` soll die ungeraden Zahlen bis 12 ausgeben. Warum hört die Schleife nie auf?"
+    back: "**`n` ist immer ungerade (1, 3, 5, …) und wird nie 12; `n != 12` bleibt immer wahr.**"
+    extra: "Sicherer ist `n < 12`. Fragen: Was ändert sich in jedem Durchlauf, und erreicht es die Bedingung sicher? Notbremse in Eclipse: das rote Quadrat (Terminate)."
+    source: "VL 6+7, Folie 35"
+    tags: [warum]
+
+  - id: gdp-vl06-07-031
+    type: cloze
+    text: "Debuggen in vier Schritten: {{c1::Vermuten}} (Trace-Tabelle), {{c2::Anhalten}} (Haltepunkt), {{c3::Beobachten}} (Schritt für Schritt), {{c4::Vergleichen}} (wo weicht ein Wert ab?)."
+    extra: "Der Debugger zeigt, was ist. Die Trace-Tabelle sagt, was sein sollte. Der Fehler liegt dort, wo beides auseinandergeht."
+    source: "VL 6+7, Folie 37"
+
+  - id: gdp-vl06-07-032
+    type: code
+    kind: bug
+    prompt: "Eine KI soll die freien Zimmer zählen. Der Code kompiliert. Welche zwei Fehler stecken in Zeile 2?"
+    code: |
+      int frei = 0;
+      for (int i = 1; i <= plaetze.length; i++) {
+          if (!plaetze[i].belegt) {
+              frei++;
+          }
+      }
+      System.out.println(frei + " Zimmer frei");
+    run: |
+      public class Main {
+          public static void main(String[] args) {
+              Zimmer[] plaetze = {new Zimmer(12, 2, 89.0), new Zimmer(7, 1, 64.5)};
+      {code}
+          }
+      }
+    expect: runtime_error
+    error_contains: "ArrayIndexOutOfBoundsException"
+    answer: "**Start bei 1 überspringt Platz 0, und `<=` läuft hinter das Ende (`ArrayIndexOutOfBoundsException`).**"
+    explanation: "Der dritte Fehler: Es fehlt die Prüfung auf `null`; bei einem Array mit Lücken kommt eine `NullPointerException`. Prüfliste: erster und letzter Index, leere Plätze, erst ein kleines Beispiel von Hand."
+    source: "VL 6+7, Folie 38"

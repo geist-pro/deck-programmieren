@@ -1,0 +1,108 @@
+# English translation overlay for cards/gdp/vl08-blackjack.yaml.
+# Only text fields; code (Java, Python, JavaScript), run, answers of predict cards and figures come from the German file.
+# Identifiers in code stay German, exactly as on the slides (kartenwert, summe, spielerZug, ...).
+lecture:
+  deck: "L08 BlackJack in Java, Python, JavaScript"
+  header: "GdP · L8 BlackJack"
+cards:
+  - id: gdp-vl08-001
+    front: "What does a **specification** describe (e.g. \"Who wins at BlackJack?\" in words), and what does it not describe?"
+    back: "**It describes what should hold, not how to program it.**"
+    extra: "Check: is every case covered? A description plus test cases with expected results is also a good prompt when you ask an AI."
+    source: "L8, slide 7"
+  - id: gdp-vl08-002
+    front: "BlackJack specification: player and dealer are **both** over 21. Who wins, and why?"
+    back: "**The dealer.** The player went bust first and has already lost."
+    extra: "A rule that is easy to forget. That is why `gewinner` (winner) has `if (s > 21) return \"Dealer\";` at the very top of the else-if chain."
+    source: "L8, slides 7, 22"
+  - id: gdp-vl08-003
+    text: "A task like BlackJack is designed {{c1::top-down}} (What does `main` need?) and built and tested {{c2::bottom-up}} (`kartenwert` first)."
+    extra: "Designing from the top: `main` → `neuerStapel`, `spielerZug`, `dealerZug`, `gewinner` → `summe` → `kartenwert` (*neuer Stapel* = new deck, *Zug* = turn, *summe* = sum, *Kartenwert* = card value)."
+    source: "L8, slide 10"
+  - id: gdp-vl08-004
+    front: "In the BlackJack method tree: why do you build and test `kartenwert` (card value) first?"
+    back: "**`kartenwert` does not depend on any other method.**"
+    extra: "`summe` builds on it, and on top of that `spielerZug`, `dealerZug`, `gewinner` and `istBlackJack`. What is tested at the bottom can be used further up."
+    source: "L8, slide 10"
+  - id: gdp-vl08-005
+    front: "BlackJack: how do you tell that a separate method `summe` (sum) for counting the points of a hand is worth it?"
+    back: "**It is needed in many places:** by `spielerZug`, `dealerZug`, `gewinner` and `istBlackJack`."
+    extra: "The same code four times would be the same source of bugs four times. `summe` in turn calls `kartenwert` instead of repeating the code."
+    source: "L8, slides 10, 18"
+  - id: gdp-vl08-006
+    front: "Signatures for BlackJack: what do `spielerZug` and `dealerZug` (player turn, dealer turn) return (marked cell)?"
+    back: "**`void`, they change the hand.**"
+    extra: "`spielerZug(hand, stapel)` and `dealerZug(hand, stapel)` (*stapel* = deck) return nothing; they add cards to the list passed in."
+    source: "L8, slide 11"
+  - id: gdp-vl08-007
+    prompt: "`kartenwert(\"ass\")` (lower case) stops with a `NumberFormatException`. Why?"
+    answer: "**\"ass\" is not equal to \"Ass\" (ace) and ends up in the `else`; `Integer.parseInt` cannot turn it into a number.**"
+    explanation: "`equals` is case-sensitive. `Integer.parseInt(\"6\")` returns the number 6; for text without a number it throws a `NumberFormatException`. (*Bube, Dame, König* = jack, queen, king.)"
+    source: "L8, slide 13"
+  - id: gdp-vl08-008
+    prompt: "What does this program print?"
+    explanation: "In an else-if chain at most one branch runs. That 18 is also `>= 12` no longer matters: the first match decides. (*drüber* = over, *stehen* = stand, *überlegen* = think it over, *ziehen* = draw.)"
+    source: "L8, slide 14"
+  - id: gdp-vl08-009
+    prompt: "What does this program print? (Careful: separate `if`s, not a chain)"
+    explanation: "With separate `if`s, every condition is checked on its own. Use separate `if`s when several things may be true at the same time; for exactly one answer, `else if`."
+    source: "L8, slide 15"
+  - id: gdp-vl08-010
+    prompt: "At 25 points the program should print \"drüber\" (over). It prints \"überlegen\" (think it over). What is wrong?"
+    answer: "**The order: `>= 12` is already true, the rest is skipped.** The narrowest condition (`> 21`) must come first."
+    explanation: "\"stehen\" and \"drüber\" never get their turn. The compiler reports nothing; only a test case like 25 points finds the bug, one with 15 does not. Choose test cases so that every branch runs once."
+    source: "L8, slide 16"
+  - id: gdp-vl08-011
+    prompt: "`summe` first counts every ace (*Ass*) as 11 and then subtracts 10 as long as needed. What does the program print?"
+    explanation: "11 + 5 + 10 + 11 = 37. Over 21, so −10: 27. Still over 21: 17. Both aces count 1. `punkte` (points) is a gatherer, `asse` (aces) a counter."
+    source: "L8, slides 17–18"
+  - id: gdp-vl08-012
+    front: "When counting a BlackJack hand: why does `summe` decide only **after** the loop whether an ace counts 1 or 11?"
+    back: "**Only when all cards are known can you tell whether an ace as 11 becomes too expensive.**"
+    extra: "Aces are the edge case. That is where people and AI easily get it wrong. So hands with aces belong in the test cases, e.g. ace, 5, king, ace → 17."
+    source: "L8, slide 17"
+  - id: gdp-vl08-013
+    prompt: "An AI suggests this body for `summe`. For ace, 5, king it returns 26 instead of 16. What is the flaw in the reasoning?"
+    answer: "**It decides about the ace when the card is drawn.** An ace that only becomes too expensive later keeps counting 11."
+    explanation: "The tests ace + king (21) and ace, ace, 9 (21) still pass. Only a test with an ace that later becomes too expensive finds the bug. That is why you write the test cases, not the AI."
+    source: "L8, slide 20"
+  - id: gdp-vl08-014
+    front: "In `dealerZug`: why do you draw with `hand.add(stapel.remove(0))` and not with `hand.add(stapel.get(0))`?"
+    back: "**`remove(0)` takes the card out of the deck, so no card can be drawn twice.**"
+    extra: "`remove` returns the removed element. The loop around it is the rule from the table: `while (summe(hand) <= 16)`."
+    source: "L8, slide 21"
+  - id: gdp-vl08-015
+    text: "Comparing text: in Java with {{c1::`k.equals(\"Ass\")`}}, in Python with {{c2::`k == \"Ass\"`}}, in JavaScript with {{c3::`k === \"Ass\"`}}."
+    extra: "In Java, `==` on strings only compares the references. JavaScript's `===` checks content and type. People who started with Python like to write `==` for strings in Java."
+    source: "L8, slides 25, 28"
+  - id: gdp-vl08-016
+    front: "Python code has no curly braces. What determines there which lines belong to the body of a loop or an `if`?"
+    back: "**The indentation** (after a colon)."
+    extra: "In Java, indentation is only for humans; in Python it is the structure of the program."
+    source: "L8, slides 25, 29"
+  - id: gdp-vl08-017
+    prompt: "Python: what does this line print? (In Java, `7 / 2` gives 3.)"
+    explanation: "Negative transfer: what is right in Java can be wrong in another language. In Python and JavaScript, `7 / 2` gives 3.5."
+    source: "L8, slide 29"
+  - id: gdp-vl08-018
+    prompt: "JavaScript: what do these two lines print?"
+    explanation: "Like Java, JavaScript concatenates for text + number (Python throws a TypeError). Where Java throws a NumberFormatException, JavaScript silently returns `NaN` (\"not a number\") and keeps computing. JavaScript does not crash here; only a test shows the bug."
+    source: "L8, slide 29"
+  - id: gdp-vl08-019
+    prompt: "JavaScript (translated from Python by an AI, aces left out): `summe([\"König\", \"7\"])` prints 1 instead of 17. Why?"
+    answer: "**In JavaScript, `for … in` runs over the positions \"0\" and \"1\", not over the cards.** Correct is `for (const karte of hand)`."
+    explanation: "`kartenwert(\"0\")` + `kartenwert(\"1\")` = 0 + 1 = 1. In Python, `for karte in hand` really runs over the cards (*karte* = card). One word of difference, no crash, just a wrong number."
+    source: "L8, slide 30"
+  - id: gdp-vl08-020
+    prompt: "Python: what does the program print? (`kartenwert` as in Java: ace 11, face cards 10)"
+    explanation: "11 + 11 + 10 = 32, then −10 twice: 12. With `if` instead of `while` only one ace would be revalued, result 22: lost instead of still in the game."
+    source: "L8, slides 26, 31"
+  - id: gdp-vl08-021
+    text: "Test cases as code: in Python, {{c1::`doctest`}} checks calls written with `>>>` in the docstring (between `\"\"\"`) below the function header; in JavaScript, {{c2::`console.assert`}} only reports when the condition is false."
+    extra: "The same idea as in Java: call, expected result, compare. Later automatically, e.g. with JUnit."
+    source: "L8, slides 19, 32"
+  - id: gdp-vl08-022
+    front: "An AI may write the bodies of `kartenwert` and `summe`. Why do you still write the test cases yourself?"
+    back: "**AI code looks plausible and compiles, but can fail at edge cases. Only test cases with expected results that you chose yourself show this.**"
+    extra: "Division of work: you do the decomposition and the test cases; the bodies yourself or with AI; checking and explaining is you again. The AI version of `summe` passed two of three tests."
+    source: "L8, slides 20, 33"

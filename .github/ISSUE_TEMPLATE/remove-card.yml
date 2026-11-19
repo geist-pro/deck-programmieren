@@ -1,0 +1,16 @@
+name: Suggest removing a card
+description: A card that is redundant, off-topic or not worth learning
+labels: [remove-card]
+body:
+  - type: input
+    id: card
+    attributes:
+      label: Card ID or the first words of the card
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why should it go?
+    validations:
+      required: true

@@ -1,0 +1,21 @@
+name: A card is wrong or unclear
+description: Report a mistake, a vague answer or a typo on a card
+labels: [card-fix]
+body:
+  - type: input
+    id: card
+    attributes:
+      label: Card ID or the first words of the card
+      description: The ID looks like gdp-vl03-005; the first words of the question work too
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is wrong?
+    validations:
+      required: true
+  - type: textarea
+    id: fix
+    attributes:
+      label: How should it read? (optional)

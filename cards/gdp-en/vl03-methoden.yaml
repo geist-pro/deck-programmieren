@@ -1,0 +1,134 @@
+# English translation overlay for cards/gdp/vl03-methoden.yaml.
+# Only text fields; code, run, answers of predict cards and figures come from the German file.
+# Identifiers in code stay German, exactly as on the slides (Gast, mitRabatt, alterIm, ...).
+lecture:
+  deck: "L03 Methods"
+  header: "GdP · L3 Methods"
+cards:
+  - id: gdp-vl03-001
+    front: "Three lines each compute `preis - preis * 10 / 100` (*preis* = price). What risk appears when the discount rises to 15 %?"
+    back: "**You have to change several places, and a forgotten one goes unnoticed.**"
+    extra: "The program still compiles and computes the wrong result. So the calculation gets a name and appears only once in the program: as a method."
+    source: "L3, slide 6"
+  - id: gdp-vl03-002
+    text: "In the method header `public static double mitRabatt(double preis, int prozent)`, `double` is the {{c1::return type}}, `mitRabatt` is the {{c2::method name}} and `double preis, int prozent` are the {{c3::parameters}}."
+    extra: "Return type = what comes out. Parameters = what goes in, each with type and name."
+    source: "L3, slide 7"
+  - id: gdp-vl03-003
+    front: "In Java, what belongs to the **signature** of a method, and what belongs only to the method header?"
+    back: "**Signature = name + parameter types.** The return type is not part of the signature."
+    extra: "The method header is the whole first line, e.g. `public static double mitRabatt(double preis, int prozent)`. The signature is `mitRabatt(double, int)`. This matters for overloading."
+    source: "L3, slide 7"
+  - id: gdp-vl03-004
+    prompt: "What does this program print?"
+    explanation: "Java evaluates left to right. Line 3: first `prozent / 100`, both `int`, so integer division: `0`. Only then does the `double` come in: `0 * 200.0` gives `0.0`. Line 4: first `preis * prozent` = `2000.0`, a `double` is already involved, then `/ 100` = `20.0`."
+    source: "L3, slide 7"
+  - id: gdp-vl03-005
+    text: "Method names: if the method does something, use {{c1::a verb}} (`einchecken()`, check in). If it answers a yes/no question, the name starts with {{c2::\"ist\"/\"hat\" (is/has)}} (`istStammgast()`)."
+    extra: "If it returns a value, name what comes out: `mitRabatt(100.0, 10)`. You recognise methods by their parentheses; names are written in camelCase."
+    source: "L3, slide 8"
+  - id: gdp-vl03-006
+    front: "\"Test cases first\": why do you work out the expected results by hand **before** writing the body of a method?"
+    back: "**Only if you know the expected result do you notice when the code is wrong.**"
+    extra: "This also applies to code written by an AI: without your own test cases you only check the code against the code. A test-case table has three columns: call, expected result, why this case."
+    source: "L3, slide 10"
+  - id: gdp-vl03-007
+    front: "When testing a method, what is an **edge case**? Give one example for `mitRabatt(preis, prozent)` (price with discount)."
+    back: "**A case at the boundary of the allowed range**, e.g. `mitRabatt(50.0, 0)` → `50.0` or `mitRabatt(80.0, 100)` → `0.0` (also: price 0, negative discount)."
+    extra: "Code is most often wrong at edge cases. Some edge cases are a decision, not a calculation: what should happen at 150 %?"
+    source: "L3, slide 10"
+  - id: gdp-vl03-008
+    front: "What is the difference between `return` and `System.out.println` in a method?"
+    back: "**`return` delivers the value to the caller. `println` only shows it on the console.**"
+    extra: "The console is for humans. Only code that receives the value via `return` can keep computing with it. Rule of thumb: return it, don't print it."
+    source: "L3, slide 13"
+  - id: gdp-vl03-009
+    prompt: "What does `main` print?"
+    explanation: "The `2` comes from the `println` in `f`. The `3` is the return value: it ends up in `y`, and `main` prints it. `return` itself writes nothing to the console."
+    source: "L3, slide 14"
+  - id: gdp-vl03-010
+    prompt: "Why does line 6 not compile?"
+    answer: "**`zeigeQuadrat` (show square) is `void` and returns nothing.** You cannot assign nothing to a variable."
+    explanation: "The 9 does appear on the console, but that is only output. Fix: `static int quadrat(int x) { return x * x; }`."
+    source: "L3, slide 13"
+  - id: gdp-vl03-011
+    prompt: "The compiler reports an error in line 4. Which one, and why?"
+    answer: "**Unreachable code:** `return` ends the method immediately, so line 4 can never run."
+    explanation: "`return;` without a value is allowed in a `void` method. There just must not be any code after it that can never be reached."
+    source: "L3, slide 15"
+  - id: gdp-vl03-012
+    text: "If a method has a return type (so it is not `void`), {{c1::every path through the method}} must end with {{c2::`return` and a value}}."
+    extra: "Conversely, `return;` without a value is allowed in a `void` method and ends it early."
+    source: "L3, slide 15"
+  - id: gdp-vl03-013
+    front: "In the call `ada.alterIm(2026)` (age in year), what does `this` stand for inside `alterIm`?"
+    back: "**The object the method is called on**, here `ada`."
+    extra: "For `ben.alterIm(2026)`, `this` would be Ben. The same method works with a different object each time. In the constructor, `this` means the same."
+    source: "L3, slides 17–18"
+  - id: gdp-vl03-014
+    prompt: "What does this program print?"
+    explanation: "`this` is the object before the dot, i.e. `ben` with birth year (`geburtsjahr`) 2004: 2026 − 2004 = 22."
+    source: "L3, slides 17–18"
+  - id: gdp-vl03-015
+    front: "Why does the class `Gast` (guest) have no attribute `alter` (age), but a method `alterIm(int jahr)`?"
+    back: "**Age changes every year, the birth year never does.** A computed age is never out of date."
+    source: "L3, slide 17"
+  - id: gdp-vl03-016
+    prompt: "Why does line 2 not compile?"
+    answer: "**The parentheses are missing:** `ada.anrede()`."
+    explanation: "Without parentheses Java looks for an *attribute* `anrede` (greeting) and finds none. Parentheses are part of the call even when there are no arguments."
+    source: "L3, slide 18"
+  - id: gdp-vl03-017
+    front: "How do you decide whether a method becomes an **instance method** or a **`static` method** (class method)?"
+    back: "**If it needs the data of a particular object → instance method. If it only computes with its parameters → `static`.**"
+    extra: "Instance method: `ada.anrede()`. Class method: `Rabatt.mitRabatt(100.0, 10)`, `Math.abs(x)`, `main`. Inside the same class the name alone is enough, without the class name."
+    source: "L3, slide 19"
+  - id: gdp-vl03-018
+    front: "Why is there no `this` in a `static` method?"
+    back: "**It is not called on an object; it belongs to the class.**"
+    extra: "Consequence: a `static` method cannot access the attributes of an object. It may use the class's constants (`static final`)."
+    source: "L3, slide 19"
+  - id: gdp-vl03-019
+    prompt: "For line 4 Eclipse reports: `Cannot make a static reference to the non-static field name` (javac: `non-static variable name cannot be referenced from a static context`). What does this mean?"
+    answer: "**`main` is `static` and has no object, so there is no `this.name`.** Which guest would be meant?"
+    explanation: "Fix: first create an object and access the attribute through it, e.g. `Gast ada = new Gast(); ada.name = \"Ada\"; System.out.println(ada.name);`."
+    source: "L3, slides 19–20"
+  - id: gdp-vl03-020
+    text: "`static final int CHECK_IN_AB = 15;`: `static` means {{c1::once per class instead of in every object}}, `final` means {{c2::the value cannot be reassigned}}."
+    extra: "Together this is a constant. It is written IN_CAPITALS_WITH_UNDERSCORES and used via the class name: `Gast.CHECK_IN_AB`, also from inside `main`."
+    source: "L3, slide 20"
+  - id: gdp-vl03-021
+    text: "Two methods with the same name in one class (**overloading**) are allowed if {{c1::the parameter list}} differs: number, types or order of the types. If only {{c2::the return type}} differs, it is not allowed."
+    extra: "Java picks the method from the arguments at the call. A familiar example: `println(int)` and `println(String)`."
+    source: "L3, slide 21"
+  - id: gdp-vl03-022
+    prompt: "Why does this class not compile?"
+    answer: "**Both methods have the same signature `mitRabatt(double)`.** They differ only in the return type."
+    explanation: "For the call `mitRabatt(100.0)` Java could not tell them apart. Allowed would be, e.g., `mitRabatt(double preis, int prozent)`."
+    source: "L3, slide 21"
+  - id: gdp-vl03-023
+    prompt: "What does `main` print?"
+    explanation: "The parameter `zahl` (number) is a separate variable and receives a copy of the 10. The method changes only its copy. Same name does not mean same variable."
+    source: "L3, slides 23–24"
+  - id: gdp-vl03-024
+    front: "`verfuenffache(zahl)` (multiply by five) should really change the variable `zahl` in `main`. How do you write that correctly?"
+    back: "**With a return value:** `static int verfuenffache(int zahl) { return zahl * 5; }` and in `main`: `zahl = verfuenffache(zahl);`"
+    extra: "The copy in the parameter disappears when the method ends. Whatever should remain has to come back via `return`."
+    source: "L3, slide 24"
+  - id: gdp-vl03-025
+    prompt: "What does `main` print?"
+    explanation: "The reference is copied, not the object. `g` and `tom` point to the same guest object, so `main` sees the change to the attribute."
+    source: "L3, slides 25–26"
+  - id: gdp-vl03-026
+    front: "Use a memory diagram to explain why `anhaengen(tom)` (append) can change `tom`'s name, but `verfuenffache(zahl)` cannot change the number in `main`."
+    back: "**The parameter `g` receives a copy of the reference: two references, one object.** For an `int`, the value itself is copied."
+    extra: "It is the same picture as `auchAda = ada` (L2.2): two variables, one object."
+    source: "L3, slide 26"
+  - id: gdp-vl03-027
+    prompt: "What does `main` print?"
+    explanation: "The assignment only redirects the copy of the reference in `g`. `ada` still points to Ada. With real pass-by-reference the output would be \"Cem\"."
+    source: "L3, slide 27"
+  - id: gdp-vl03-028
+    text: "Java always passes parameters {{c1::by value}}. For objects, that value is {{c2::a reference}}."
+    extra: "That is why the caller sees changes to attributes (Tom Werner), but not a new assignment to the parameter (Ada stays Ada). The common answer \"objects are passed by reference\" is wrong."
+    source: "L3, slides 27–28"

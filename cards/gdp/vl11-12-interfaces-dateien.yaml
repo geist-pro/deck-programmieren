@@ -1,0 +1,411 @@
+lecture:
+  id: gdp-vl11-12
+  deck: "VL 11–12 Interfaces & Dateien"
+  header: "GdP · VL 11–12 Interfaces & Dateien"
+  lang: de
+  support: |
+    class Zimmer {
+        private int betten = 1;
+        public int getBetten() {
+            return betten;
+        }
+        public void setBetten(int betten) {
+            if (betten < 1 || betten > 4) {
+                throw new IllegalArgumentException("1 bis 4");
+            }
+            this.betten = betten;
+        }
+    }
+    record Gast(String name, int jahr) implements Comparable<Gast> {
+        public int compareTo(Gast other) {
+            return Integer.compare(jahr, other.jahr);
+        }
+    }
+cards:
+  # ---------------------------------------------------------------- Rückblick: Interfaces
+  - id: gdp-vl11-12-001
+    type: code
+    kind: predict
+    prompt: "Was gibt dieses Programm aus?"
+    code: |
+      interface Gruss {
+          String text();
+      }
+      class Hallo implements Gruss {
+          public String text() { return "Hallo"; }
+      }
+      public class Main {
+          public static void main(String[] args) {
+              Gruss g = new Hallo();
+              System.out.println(g.text());
+          }
+      }
+    support: ""
+    answer: "Hallo"
+    explanation: "Eine Variable darf den Typ eines Interfaces haben. Das Objekt dahinter ist ein `Hallo`, also läuft dessen `text()`. Nur ein Objekt eines Interfaces kann man nicht erzeugen: `new Gruss()` kompiliert nicht."
+    source: "VL 11+12, Folie 5"
+
+  - id: gdp-vl11-12-002
+    type: code
+    kind: bug
+    prompt: "Warum kompiliert die Klasse `Hallo` nicht?"
+    code: |
+      interface Gruss {
+          String text();
+      }
+      class Hallo implements Gruss {
+          String text() { return "Hallo"; }
+      }
+    run: |
+      public class Main {
+          public static void main(String[] args) {
+              System.out.println(new Hallo().text());
+          }
+      }
+      {code}
+    support: ""
+    expect: compile_error
+    error_contains: "weaker access privileges"
+    answer: "**`public` fehlt vor `text()` in Zeile 5.** Die Methode im Interface steht ohne Zugriffsmodifier da und ist damit automatisch `public`."
+    explanation: "Die Klasse darf die Sichtbarkeit nicht einschränken. javac: „attempting to assign weaker access privileges; was public“. Eclipse: „Cannot reduce the visibility of the inherited method from Gruss“. Richtig: `public String text() { … }`."
+    source: "VL 11+12, Folie 5"
+
+  # ---------------------------------------------------------------- Teil 1: Kapselung
+  - id: gdp-vl11-12-003
+    type: basic
+    front: "Ein `Zimmer` hat das Attribut `public int betten`. Welches Problem entsteht, wenn eine andere Klasse `z.betten = -3;` schreibt?"
+    back: "**Es kompiliert, und das Zimmer hat einen Zustand, den es nie geben dürfte.** Jede Klasse kann den Wert ändern."
+    extra: "Der Fehler fällt erst viel später auf, irgendwo anders im Programm. Kapselung heißt: Das Objekt passt selbst auf seine Daten auf."
+    source: "VL 11+12, Folie 7"
+    tags: [warum]
+
+  - id: gdp-vl11-12-004
+    type: cloze
+    text: "Faustregel für die Sichtbarkeit: Attribute {{c1::`private`}}, Methoden {{c2::`public`}}."
+    extra: "Dann ändern nur die Methoden der Klasse selbst die Attribute, und ein Setter kann jeden neuen Wert prüfen."
+    source: "VL 11+12, Folie 8"
+
+  - id: gdp-vl11-12-005
+    type: basic
+    front: "Vier Zugriffsstufen: Wer darf auf ein `protected`-Attribut zugreifen? (verdeckte Zeile)"
+    back: "**Die Klasse selbst, das gleiche Paket und Unterklassen, auch in anderen Paketen.** Nicht: beliebige Klassen überall."
+    extra: "Die Spalte „Unterklasse“ meint eine Unterklasse in einem anderen Paket."
+    figure: "gdp-vl11-12-005.png"
+    figure_back: "gdp-vl11-12-005-back.png"
+    source: "VL 11+12, Folie 8"
+
+  - id: gdp-vl11-12-006
+    type: basic
+    front: "Vier Zugriffsstufen: Wer darf auf ein Attribut **ohne Modifier** zugreifen? (verdeckte Zeile)"
+    back: "**Die Klasse selbst und das gleiche Paket.** Unterklassen in anderen Paketen nicht."
+    extra: "Im Unterschied zu `protected` fehlt nur die Unterklasse in einem anderen Paket. Klassen auf oberster Ebene (nicht in einer anderen Klasse) sind `public` oder ohne Modifier."
+    figure: "gdp-vl11-12-006.png"
+    figure_back: "gdp-vl11-12-006-back.png"
+    source: "VL 11+12, Folie 8"
+
+  - id: gdp-vl11-12-007
+    type: code
+    kind: bug
+    prompt: "Dieser Code steht in der Klasse `Rezeption`. In `Zimmer` ist `betten` `private`, `setBetten` und `getBetten` sind `public`. Welche Zeile meldet der Compiler, und warum?"
+    code: |
+      Zimmer z = new Zimmer();
+      z.setBetten(3);
+      z.betten = 3;
+      System.out.println(z.getBetten());
+    run: |
+      public class Rezeption {
+          public static void main(String[] args) {
+      {code}
+          }
+      }
+    expect: compile_error
+    error_contains: "betten has private access in Zimmer"
+    answer: "**Zeile 3: `betten` ist `private`, und `Rezeption` ist eine andere Klasse als `Zimmer`.**"
+    explanation: "Die Grenze ist die Klasse, nicht die Datei: Auch in derselben Datei kommt der Fehler. `setBetten` darf `betten` ändern, weil die Methode zu `Zimmer` gehört und selbst `public` ist."
+    source: "VL 11+12, Folie 10"
+
+  - id: gdp-vl11-12-008
+    type: code
+    kind: predict
+    prompt: "`betten` ist `private`. Was gibt `System.out.println(new Zimmer(3).mehrBettenAls(new Zimmer(2)));` aus?"
+    code: |
+      class Zimmer {
+          private int betten;
+          Zimmer(int betten) { this.betten = betten; }
+          boolean mehrBettenAls(Zimmer anderes) {
+              return betten > anderes.betten;
+          }
+      }
+    run: |
+      public class Main {
+          public static void main(String[] args) {
+              System.out.println(new Zimmer(3).mehrBettenAls(new Zimmer(2)));
+          }
+      }
+      {code}
+    support: ""
+    answer: "true"
+    explanation: "`private` gilt pro Klasse, nicht pro Objekt. Code in der Klasse `Zimmer` darf die privaten Attribute jedes Zimmers lesen, also auch `anderes.betten`."
+    source: "VL 11+12, Folie 8"
+
+  - id: gdp-vl11-12-009
+    type: cloze
+    text: "Private Attribute der Oberklasse sind im Objekt der Unterklasse {{c1::vorhanden}}. Die Unterklasse kommt nur {{c2::nicht direkt}} an sie heran."
+    extra: "`private` heißt: nur die Klasse selbst. Die Unterklasse ist eine andere Klasse."
+    source: "VL 11+12, Folie 8"
+
+  - id: gdp-vl11-12-010
+    type: basic
+    front: "Eine Unterklasse `B` in einem anderen Paket erbt das `protected`-Attribut `x` von `A`. Über welche Art von Referenz darf Code in `B` auf `x` zugreifen, und über welche nicht?"
+    back: "**Über Referenzen vom Typ der Unterklasse, etwa `this.x`. Nicht über eine Referenz vom Typ der Oberklasse, etwa `a.x` mit `A a`.**"
+    extra: "Für den Alltag reicht die Faustregel: Attribute `private`, Methoden `public`."
+    source: "VL 11+12, Folie 8"
+
+  - id: gdp-vl11-12-011
+    type: basic
+    front: "Warum soll `setBetten(int betten)` bei einem Wert außerhalb von 1 bis 4 eine `IllegalArgumentException` werfen, statt den Wert still zu ignorieren?"
+    back: "**Damit der Fehler sofort und an der richtigen Stelle auffällt.** Ein still ignorierter Wert macht die Fehlersuche lang."
+    extra: "Lieber laut scheitern: `z.setBetten(-3)` bricht mit der Meldung „1 bis 4“ ab, und man sieht, woher das Problem kommt."
+    source: "VL 11+12, Folie 9"
+    tags: [warum]
+
+  - id: gdp-vl11-12-012
+    type: basic
+    front: "Eclipse oder eine KI erzeugt für `Zimmer` auch `setNummer(int nummer)`. Warum sollte es diesen Setter nicht geben, und was schreibt man stattdessen?"
+    back: "**Eine Zimmernummer ändert sich nie. Statt eines Setters: `final int nummer`.**"
+    extra: "Ebenso ändert sich ein Kontostand nur über `einzahlen` und `abheben`, nicht über `setStand`. Der Assistent kennt diese Regeln nicht, also fragen: Welcher Setter darf es nicht geben?"
+    source: "VL 11+12, Folie 11"
+
+  - id: gdp-vl11-12-013
+    type: cloze
+    text: "`record Gast(String name, int jahr) { }`: Die Attribute sind {{c1::`private final`}}, und die Getter heißen {{c2::wie das Attribut, ohne `get`: `name()`, `jahr()`}}."
+    extra: "Dazu bekommt man einen Konstruktor, `toString` und `equals`. Einen Setter gibt es nicht: Die Werte bleiben fest. `println(g)` ergibt `Gast[name=Mia, jahr=2004]`."
+    figure_back: "gdp-vl11-12-013.png"
+    source: "VL 11+12, Folie 12"
+
+  - id: gdp-vl11-12-014
+    type: code
+    kind: bug
+    prompt: "`Gast` ist der record `record Gast(String name, int jahr) { }`. Warum kompiliert Zeile 2 nicht?"
+    code: |
+      Gast g = new Gast("Mia", 2004);
+      System.out.println(g.getName());
+    expect: compile_error
+    error_contains: "cannot find symbol"
+    answer: "**Der Getter eines records heißt `name()`, nicht `getName()`.**"
+    explanation: "Ein record erzeugt Getter mit dem Namen des Attributs. Richtig: `g.name()` liefert Mia."
+    source: "VL 11+12, Folie 12"
+
+  - id: gdp-vl11-12-015
+    type: basic
+    front: "Warum passt in Java ein `record` nicht für ein `Zimmer`, dessen Bettenzahl sich ändern kann?"
+    back: "**Ein record hat keine Setter, seine Attribute sind `final`.** Die Werte lassen sich nach dem Erzeugen nicht mehr ändern."
+    extra: "Ein record passt für Daten, die sich nicht ändern, etwa einen Gast oder eine Karte. Für das Zimmer braucht man weiter eine normale Klasse mit prüfendem Setter."
+    source: "VL 11+12, Folie 12"
+
+  # ---------------------------------------------------------------- Teil 2: Interfaces nutzen
+  - id: gdp-vl11-12-016
+    type: basic
+    front: "`Gast.compareTo` liefert `Integer.compare(jahr, other.jahr)`. Welches Vorzeichen hat `mia.compareTo(ben)` (Mia 2004, Ben 1999), und was folgt daraus für die Reihenfolge?"
+    back: "**Größer als 0: Mia kommt nach Ben.**"
+    extra: "`a.compareTo(b)` kleiner 0 heißt a kommt vor b, 0 heißt gleich, größer 0 heißt a kommt nach b. Es zählt nur das Vorzeichen (das JDK liefert hier 1)."
+    figure_back: "gdp-vl11-12-016.png"
+    source: "VL 11+12, Folie 14"
+
+  - id: gdp-vl11-12-017
+    type: basic
+    front: "Warum schreibt man in `compareTo` `Integer.compare(jahr, other.jahr)` statt `jahr - other.jahr`?"
+    back: "**Die Subtraktion kann bei großen Zahlen überlaufen und dann das falsche Vorzeichen liefern.**"
+    extra: "`Integer.compare` liefert immer das richtige Vorzeichen (im JDK -1, 0 oder 1). Für andere Reihenfolgen, etwa nach dem Namen, gibt es `Comparator`."
+    source: "VL 11+12, Folie 14"
+    tags: [warum]
+
+  - id: gdp-vl11-12-018
+    type: code
+    kind: predict
+    prompt: "`Gast` implementiert `Comparable<Gast>` und vergleicht in `compareTo` mit `Integer.compare(jahr, other.jahr)`. Was gibt dieses Programm aus?"
+    code: |
+      List<Gast> gaeste = new ArrayList<>();
+      gaeste.add(new Gast("Mia", 2004));
+      gaeste.add(new Gast("Ben", 1999));
+      gaeste.add(new Gast("Ali", 2001));
+      Collections.sort(gaeste);
+      for (Gast g : gaeste) {
+          System.out.println(g.name() + " " + g.jahr());
+      }
+    run: |
+      import java.util.*;
+      public class Main {
+          public static void main(String[] args) {
+      {code}
+          }
+      }
+    answer: |
+      Ben 1999
+      Ali 2001
+      Mia 2004
+    explanation: "`Collections.sort` ruft `compareTo` auf und sortiert nach dem Geburtsjahr, aufsteigend."
+    source: "VL 11+12, Folie 15"
+
+  - id: gdp-vl11-12-019
+    type: basic
+    front: "Warum gibt `Collections.sort(gaeste)` einen Compilerfehler, wenn `Gast` nicht `Comparable<Gast>` implementiert?"
+    back: "**`sort` verlässt sich darauf, dass es `compareTo` gibt, und verlangt deshalb `Comparable`-Elemente.**"
+    extra: "Hier ist das Interface wirklich ein Vertrag. `String` und `Integer` sind schon `Comparable`, Listen davon kann man direkt sortieren."
+    source: "VL 11+12, Folie 15"
+    tags: [warum]
+
+  - id: gdp-vl11-12-020
+    type: code
+    kind: predict
+    prompt: "Was gibt dieses Programm aus?"
+    code: |
+      List<String> namen = new ArrayList<>();
+      namen.add("Mia");
+      namen.add("ali");
+      namen.add("Ben");
+      Collections.sort(namen);
+      System.out.println(namen);
+    run: |
+      import java.util.*;
+      public class Main {
+          public static void main(String[] args) {
+      {code}
+          }
+      }
+    answer: "[Ben, Mia, ali]"
+    explanation: "`String` vergleicht Zeichen für Zeichen nach Unicode. Die Großbuchstaben A–Z kommen vor den Kleinbuchstaben a–z: 'B' hat die Nummer 66, 'a' die 97. Ohne Groß- und Kleinschreibung: `namen.sort(String.CASE_INSENSITIVE_ORDER)`."
+    source: "VL 11+12, Folie 16"
+
+  - id: gdp-vl11-12-021
+    type: cloze
+    text: "Ein Interface mit Testfällen als Auftrag, auch an eine KI: Das Interface sagt, {{c1::was gebaut wird}}. Die Testfälle sagen, {{c2::wann es richtig ist}}."
+    extra: "Danach prüft man selbst: Sind die Attribute `private`? Werden Eingaben geprüft? Grüne Tests allein reichen nicht."
+    source: "VL 11+12, Folie 17"
+
+  # ---------------------------------------------------------------- Teil 3: Dateien
+  - id: gdp-vl11-12-022
+    type: code
+    kind: predict
+    prompt: "Was gibt dieses Programm aus?"
+    code: |
+      Path datei = Path.of("notiz.txt");
+      Files.writeString(datei, "Zimmer 12: Mia\nZimmer 14: Ben\n");
+      List<String> zeilen = Files.readAllLines(datei);
+      System.out.println(zeilen.size() + " Zeilen");
+      System.out.println(zeilen.get(0));
+    run: |
+      import java.io.IOException;
+      import java.nio.file.*;
+      import java.util.List;
+      public class Main {
+          public static void main(String[] args) throws IOException {
+      {code}
+          }
+      }
+    answer: |
+      2 Zeilen
+      Zimmer 12: Mia
+    explanation: "`\\n` ist eine Escape-Sequenz für den Zeilenumbruch, der Text hat also zwei Zeilen. `readAllLines` liefert jede Zeile als ein Element der Liste, ohne den Umbruch."
+    source: "VL 11+12, Folie 20"
+
+  - id: gdp-vl11-12-023
+    type: cloze
+    text: "`Files.writeString(datei, text)` {{c1::überschreibt}} eine vorhandene Datei. `Files.readAllLines(datei)` liest {{c2::alle Zeilen in eine Liste}}."
+    extra: "`Path.of(\"notiz.txt\")` nennt die Datei, in Eclipse liegt sie im Projektordner. `writeString` und `readAllLines` nutzen UTF-8, wenn man keinen Zeichensatz angibt, und es gibt nichts zu schließen."
+    source: "VL 11+12, Folie 20"
+
+  - id: gdp-vl11-12-024
+    type: code
+    kind: bug
+    prompt: "Warum kompiliert dieses `main` nicht?"
+    code: |
+      public static void main(String[] args) {
+          Path datei = Path.of("notiz.txt");
+          Files.writeString(datei, "Zimmer 12: Mia\n");
+          List<String> zeilen = Files.readAllLines(datei);
+          System.out.println(zeilen.get(0));
+      }
+    run: |
+      import java.io.IOException;
+      import java.nio.file.*;
+      import java.util.List;
+      public class Main {
+      {code}
+      }
+    expect: compile_error
+    error_contains: "unreported exception IOException"
+    answer: "**`writeString` und `readAllLines` können eine `IOException` werfen, und um die muss man sich kümmern.**"
+    explanation: "Lösung: `throws IOException` hinter `main(String[] args)` oder die Zeilen in try-catch. javac: „unreported exception IOException; must be caught or declared to be thrown“. Eclipse: „Unhandled exception type IOException“."
+    source: "VL 11+12, Folie 20–21"
+
+  - id: gdp-vl11-12-025
+    type: cloze
+    text: "`IOException` ist eine {{c1::checked}} Exception: Der Compiler verlangt, dass man sie {{c2::mit try-catch abfängt oder mit `throws` weitergibt}}."
+    extra: "Fehlt die Datei, kommt konkret eine `NoSuchFileException`, eine Unterklasse von `IOException`. `throws` in `main` reicht für kleine Übungen, ein echtes Programm fängt den Fehler ab und sagt dem Nutzer, was los ist."
+    source: "VL 11+12, Folie 21"
+
+  - id: gdp-vl11-12-026
+    type: code
+    kind: bug
+    prompt: "`gaeste.csv` enthält die Zeilen `name,jahr`, `Mia,2004` und `Ben,1999`. Was passiert, und was ist falsch?"
+    code: |
+      List<String> zeilen = Files.readAllLines(Path.of("gaeste.csv"));
+      List<Gast> gaeste = new ArrayList<>();
+      for (int i = 0; i < zeilen.size(); i++) {
+          String[] teile = zeilen.get(i).split(",");
+          gaeste.add(new Gast(teile[0], Integer.parseInt(teile[1])));
+      }
+    run: |
+      import java.io.IOException;
+      import java.nio.file.*;
+      import java.util.*;
+      public class Main {
+          public static void main(String[] args) throws IOException {
+              Files.writeString(Path.of("gaeste.csv"), "name,jahr\nMia,2004\nBen,1999\n");
+      {code}
+              System.out.println(gaeste);
+          }
+      }
+    expect: runtime_error
+    error_contains: "NumberFormatException"
+    answer: "**`NumberFormatException`: Die Schleife beginnt bei 0, also bei der Kopfzeile, und `parseInt(\"jahr\")` scheitert.**"
+    explanation: "Richtig: `for (int i = 1; …)`. `split(\",\")` zerlegt am Komma, `teile[1]` ist das Jahr als Text, deshalb `Integer.parseInt`."
+    source: "VL 11+12, Folie 23"
+
+  - id: gdp-vl11-12-027
+    type: cloze
+    text: "`try (BufferedReader r = Files.newBufferedReader(...)) { … }` heißt {{c1::try-with-resources}}: Der Reader wird am Ende {{c2::automatisch geschlossen, auch wenn eine Exception fliegt}}."
+    extra: "`readLine()` liefert die nächste Zeile und am Dateiende `null`, daher `while (zeile != null)`. Einen Scanner auf `System.in` schließt man dagegen nie, sonst kann man danach nichts mehr von der Tastatur lesen."
+    figure_back: "gdp-vl11-12-027.png"
+    source: "VL 11+12, Folie 24"
+
+  - id: gdp-vl11-12-028
+    type: basic
+    front: "Warum soll man Daten aus fremder Quelle nie mit Java-Serialisierung einlesen?"
+    back: "**Das Deserialisieren fremder Daten kann Code ausführen lassen. Das ist eine Sicherheitslücke.**"
+    extra: "Außerdem ist das Format binär und nur für Java lesbar. Web-Dienste nutzen deshalb JSON, in Java mit einer Bibliothek wie Jackson oder Gson."
+    source: "VL 11+12, Folie 25"
+    tags: [warum]
+
+  - id: gdp-vl11-12-029
+    type: code
+    kind: predict
+    prompt: "`Gast` ist ein record. Was gibt dieses Programm aus?"
+    code: |
+      Gast a = new Gast("Mia", 2004);
+      Gast b = new Gast("Mia", 2004);
+      System.out.println(a == b);
+      System.out.println(a.equals(b));
+    answer: |
+      false
+      true
+    explanation: "`==` vergleicht, ob es dasselbe Objekt ist: Es sind zwei. Das `equals` eines records vergleicht die Werte. Darum kann ein Rundlauf-Test einfach `gelesen.equals(original)` prüfen."
+    source: "VL 11+12, Folie 12, 26"
+
+  - id: gdp-vl11-12-030
+    type: basic
+    front: "Wie läuft ein **Rundlauf-Test** (round trip) für Code, der Gäste als CSV speichert und liest?"
+    back: "**Liste schreiben, Datei wieder lesen, dann muss `gelesen.equals(original)` `true` ergeben.**"
+    extra: "Damit fallen typische Fehler beim Lesen auf, etwa eine nicht übersprungene Kopfzeile. Mit records ist das leicht, weil ihr `equals` die Werte vergleicht."
+    source: "VL 11+12, Folie 26"

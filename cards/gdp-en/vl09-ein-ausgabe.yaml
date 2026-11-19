@@ -1,0 +1,122 @@
+# English translation overlay for cards/gdp/vl09-ein-ausgabe.yaml.
+# Only text fields; code, run, stdin, answers of predict/fill cards and figures come from the German file.
+# Identifiers in code stay German, exactly as on the slides (naechte, eingabe, Addierer, ...).
+lecture:
+  deck: "L09 Input/Output & Exceptions"
+  header: "GdP · L9 Input/Output"
+cards:
+  - id: gdp-vl09-001
+    prompt: "What does this program print?"
+    explanation: "do-while checks only after the iteration and therefore runs at least once. Afterwards `n` is 11, and `11 < 10` is false. A normal while loop would print nothing."
+    source: "L9, slide 4"
+  - id: gdp-vl09-002
+    prompt: "What does this program print?"
+    explanation: "`Math.sqrt` returns a `double`. `parseInt` turns the text \"42\" into the number 42, `parseDouble` turns \"2.50\" into the decimal number 2.5. All three are static and are called via the class name."
+    source: "L9, slide 8"
+  - id: gdp-vl09-003
+    text: "For every primitive type there is a {{c1::wrapper class}}: `int` has `Integer`, `double` has `Double`. You need them e.g. for lists: {{c2::`ArrayList<Double>`}} instead of `ArrayList<double>`."
+    extra: "The wrapper classes also bring useful static methods: `Integer.parseInt`, `Double.parseDouble`."
+    source: "L9, slide 8"
+  - id: gdp-vl09-004
+    front: "On a computer set to German: which decimal separator does `Double.parseDouble` expect, and which does `sc.nextDouble()` expect?"
+    back: "**`parseDouble` expects a point (\"2.50\"), the Scanner a comma (3,5).**"
+    extra: "The Scanner uses the computer's language settings. The wrong character gives an exception: `parseDouble(\"2,50\")` → NumberFormatException, \"3.5\" for the Scanner → InputMismatchException."
+    source: "L9, slides 8, 16"
+  - id: gdp-vl09-005
+    text: "Classes from the package {{c1::`java.lang`}} (String, Math, Integer, System) are available without `import`. `Scanner` and `ArrayList` come from {{c2::`java.util`}} and need an `import`."
+    extra: "`import` goes after the `package` line and before the class. Eclipse adds missing imports with Ctrl+Shift+O. `import java.util.*` brings in all classes of the package."
+    source: "L9, slide 9"
+  - id: gdp-vl09-006
+    text: "In the Java documentation of a method you read three things: what you put in (parameters), {{c1::what comes back (Returns)}} and {{c2::what can go wrong (Throws)}}."
+    extra: "For `Integer.parseInt` it says `throws NumberFormatException`: when the text does not contain a number."
+    source: "L9, slide 10"
+  - id: gdp-vl09-007
+    prompt: "Line 2 comes from an AI answer. Why does it not compile?"
+    answer: "**The method `nextString()` does not exist.** A word is read with `sc.next()`."
+    explanation: "AI tools invent names that sound likely. Check: look it up in the docs or compile. Eclipse reports \"The method nextString() is undefined\"."
+    source: "L9, slide 11"
+  - id: gdp-vl09-008
+    prompt: "The program is started with `java Addierer 4 7` (*Addierer* = adder). What does it print?"
+    explanation: "Program arguments arrive in `args` as strings: \"4\" and \"7\". Without `parseInt`, `args[0] + args[1]` would give the text \"47\"."
+    source: "L9, slide 14"
+  - id: gdp-vl09-009
+    front: "The Java program `Addierer` (adder) reads `args[0]` and `args[1]`. What happens if you start it without program arguments?"
+    back: "**`ArrayIndexOutOfBoundsException`:** `args` is then an empty array, and `args[0]` does not exist."
+    extra: "In Eclipse you enter arguments under Run → Run Configurations → Arguments."
+    source: "L9, slide 14"
+  - id: gdp-vl09-010
+    prompt: "The user types `3` and Enter (and wants to type her name next). What does the program print?"
+    explanation: "`nextInt` reads only the 3; the line break stays behind. `nextLine` reads the empty rest of that line, so the program does not even wait for the name (*naechte* = nights). Fix: call `sc.nextLine()` once after `nextInt`, or read everything with `nextLine` and convert with `Integer.parseInt`."
+    source: "L9, slide 17"
+  - id: gdp-vl09-011
+    prompt: "The user types `1 Hallo` and Enter. What does the program print?"
+    explanation: "The Scanner reads word by word: `nextInt` takes the first word \"1\". \"Hallo\" stays unread and does no harm here."
+    source: "L9, slide 18"
+  - id: gdp-vl09-012
+    text: "For the input `Ada Lovelace`, `sc.next()` returns {{c1::\"Ada\"}}, and `sc.nextLine()` returns {{c2::\"Ada Lovelace\"}}."
+    extra: "`next` reads one word, `nextLine` the rest of the line. `hasNextInt()` only checks whether a number comes next, and reads nothing."
+    source: "L9, slide 16"
+  - id: gdp-vl09-013
+    front: "Why do you not close a `Scanner` on `System.in` with `close()`, but always close a Scanner on a file?"
+    back: "**`close()` also closes `System.in`; after that the program cannot read from the console any more. A file, on the other hand, would stay open without `close()`; with try-with-resources it is closed automatically.**"
+    extra: "So: create one Scanner for System.in at the start and leave it open. \"Always close the Scanner\" is only true for files."
+    source: "L9, slides 16, 32"
+  - id: gdp-vl09-014
+    front: "Stack trace after the input \"Hallo\": in which line of **your own** code did the error happen, and how do you find it?"
+    back: "**`Buchung.java:7`: from the top, the first line with one of your own classes.**"
+    extra: "Read the type first (InputMismatchException: the input does not match the type). The lines with `java.base` belong to Java itself and depend on the JDK version. Line 7 is `sc.nextInt()`: text came there instead of a number."
+    source: "L9, slide 20"
+  - id: gdp-vl09-015
+    prompt: "What does this program print?"
+    explanation: "From the line that throws, the rest of the `try` is skipped; \"Nächte:\" (nights) never appears. Then the catch block runs, and after that execution continues normally. (*Keine Zahl* = not a number, *Weiter geht's* = moving on.)"
+    source: "L9, slide 22"
+  - id: gdp-vl09-016
+    prompt: "What does this program print?"
+    explanation: "Already `naechte[2]` throws (there are only indices 0 and 1), so \"A\" is dropped. catch prints B, `finally` always runs (with and without an exception), then D."
+    source: "L9, slide 23"
+  - id: gdp-vl09-017
+    prompt: "What does this program print?"
+    explanation: "`parseInt` works, but `liste.get(5)` throws with three elements. The first matching catch block wins, then `finally` runs. (*Kein Zimmer* = no room, *Fertig* = done.)"
+    source: "L9, slide 25"
+  - id: gdp-vl09-018
+    front: "A `try` has several catch blocks. Why does `catch (Exception e)` belong at the end?"
+    back: "**Otherwise the program does not compile:** a later catch for a subtype of `Exception` could never be reached."
+    extra: "The order matters, as with `else if`. With `e.getMessage()` you get the message of the exception."
+    source: "L9, slide 25"
+  - id: gdp-vl09-019
+    text: "For the input \"drei\" (three), `sc.nextInt()` throws an {{c1::`InputMismatchException`}}, and `Integer.parseInt(\"drei\")` throws a {{c2::`NumberFormatException`}}."
+    extra: "\"nextInt throws a NumberFormatException\" is something you often hear, also from AI. A five-line test program settles the question."
+    source: "L9, slides 24, 32"
+  - id: gdp-vl09-020
+    front: "Common exceptions: which exception belongs in the marked cell?"
+    back: "**`ArithmeticException`**"
+    extra: "Integer division by 0 (`5 / 0` with int). Like all exceptions in this table it is unchecked: better to check beforehand than to catch afterwards."
+    source: "L9, slide 24"
+  - id: gdp-vl09-021
+    front: "In Java, what distinguishes a **checked** exception (e.g. `IOException`) from an **unchecked** one (e.g. `NumberFormatException`)?"
+    back: "**For checked ones the compiler demands `try/catch` or `throws`, otherwise the program does not compile. For unchecked ones it does not.**"
+    extra: "Checked: problems from outside that also happen in a correct program (file missing, network down). Unchecked: mostly programming errors."
+    source: "L9, slides 24, 26"
+  - id: gdp-vl09-022
+    prompt: "The code is in a `main` without `throws`. Why does line 1 not compile?"
+    answer: "**Opening the file can throw a checked `IOException`. You must catch it with `try/catch` or declare it with `throws` in the method header.**"
+    explanation: "javac: \"unreported exception IOException; must be caught or declared to be thrown\". Eclipse: \"Unhandled exception type IOException\". Solution with try-with-resources: `try (Scanner datei = new Scanner(Path.of(\"zimmer.txt\"))) { … } catch (IOException e) { … }`. The file (*datei*) is closed automatically at the end."
+    source: "L9, slide 26"
+  - id: gdp-vl09-023
+    front: "What is wrong with an empty catch block `catch (NumberFormatException e) { }`?"
+    back: "**It swallows the exception and so hides the bug.** At least print a message."
+    extra: "More rules: catch precisely (NumberFormatException instead of Exception) and check beforehand (`!= null`, `i < liste.size()`, `hasNextInt()`)."
+    source: "L9, slide 27"
+  - id: gdp-vl09-024
+    prompt: "Input: `drei` (three), then `3`. Complete the catch block so that the program asks again instead of looping forever."
+    explanation: "`sc.next()` throws away the wrong word. Java cannot jump back to where the error happened, so the loop asks again; `break` leaves it as soon as a number came. (*Nächte?* = nights?, *Bitte eine Zahl* = please enter a number, *Gebucht* = booked.)"
+    source: "L9, slide 29"
+  - id: gdp-vl09-025
+    front: "An AI input loop catches `InputMismatchException`, prints \"Bitte eine Zahl.\" (please enter a number) and asks again, but never calls `sc.next()`. What happens for the input \"drei\", and why?"
+    back: "**Infinite loop:** `nextInt` leaves the wrong word behind, the next attempt reads it again and fails again."
+    extra: "Some suggestions, also from agentic tools, only test the success case. A single test with deliberately wrong input finds the bug."
+    source: "L9, slide 31"
+  - id: gdp-vl09-026
+    prompt: "Input: `5`, `3`, `0` (each followed by Enter). What does the program print?"
+    explanation: "do-while fits, because you have to read before you can check. The 0 is added too, which does no harm. `summe` (sum) is a gatherer."
+    source: "L9, slide 30"

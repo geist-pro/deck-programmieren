@@ -1,0 +1,326 @@
+lecture:
+  id: gdp-vl08
+  deck: "VL 08 BlackJack in Java, Python, JavaScript"
+  header: "GdP · VL 8 BlackJack"
+  lang: de
+cards:
+  # ---------------------------------------------------------------- Aufgabe und Zerlegung
+  - id: gdp-vl08-001
+    type: basic
+    front: "Was beschreibt eine **Spezifikation** (z. B. „Wer gewinnt beim BlackJack?“ in Worten), und was beschreibt sie nicht?"
+    back: "**Sie beschreibt, was gelten soll, nicht wie man es programmiert.**"
+    extra: "Prüfen: Ist jeder Fall abgedeckt? Beschreibung plus Testfälle mit erwartetem Ergebnis ist auch ein guter Prompt, wenn man eine KI fragt."
+    source: "VL 8, Folie 7"
+
+  - id: gdp-vl08-002
+    type: basic
+    front: "BlackJack-Spezifikation: Spieler und Dealer sind **beide** über 21. Wer gewinnt, und warum?"
+    back: "**Der Dealer.** Der Spieler ist zuerst überkauft und hat damit schon verloren."
+    extra: "Eine Regel, die man leicht vergisst. In `gewinner` steht deshalb `if (s > 21) return \"Dealer\";` ganz oben in der else-if-Kette."
+    source: "VL 8, Folie 7, 22"
+
+  - id: gdp-vl08-003
+    type: cloze
+    text: "Eine Aufgabe wie BlackJack wird {{c1::top-down}} entworfen (Was braucht `main`?) und {{c2::bottom-up}} gebaut und getestet (zuerst `kartenwert`)."
+    extra: "Entwerfen von oben: `main` → `neuerStapel`, `spielerZug`, `dealerZug`, `gewinner` → `summe` → `kartenwert`."
+    source: "VL 8, Folie 10"
+
+  - id: gdp-vl08-004
+    type: basic
+    front: "Im Methodenbaum von BlackJack: Warum baut und testet man `kartenwert` als Erstes?"
+    back: "**`kartenwert` hängt von keiner anderen Methode ab.**"
+    extra: "Darüber baut `summe` auf, darüber `spielerZug`, `dealerZug`, `gewinner` und `istBlackJack`. Was unten getestet ist, kann man oben verwenden."
+    figure_back: "gdp-vl08-004.png"
+    source: "VL 8, Folie 10"
+
+  - id: gdp-vl08-005
+    type: basic
+    front: "BlackJack: Woran erkennt man, dass sich für das Zählen der Punkte einer Hand eine eigene Methode `summe` lohnt?"
+    back: "**Sie wird an vielen Stellen gebraucht:** von `spielerZug`, `dealerZug`, `gewinner` und `istBlackJack`."
+    extra: "Viermal derselbe Code wäre viermal dieselbe Fehlerquelle. `summe` selbst ruft wiederum `kartenwert` auf, statt den Code zu wiederholen."
+    source: "VL 8, Folie 10, 18"
+    tags: [warum]
+
+  - id: gdp-vl08-006
+    type: basic
+    front: "Signaturen für BlackJack: Was liefern `spielerZug` und `dealerZug` (markierte Zelle)?"
+    back: "**`void`, sie ändern die Hand.**"
+    extra: "`spielerZug(hand, stapel)` und `dealerZug(hand, stapel)` liefern nichts zurück, sondern fügen der übergebenen Liste Karten hinzu."
+    figure: "gdp-vl08-006.png"
+    figure_back: "gdp-vl08-006-back.png"
+    source: "VL 8, Folie 11"
+
+  # ---------------------------------------------------------------- In Java bauen
+  - id: gdp-vl08-007
+    type: code
+    kind: error
+    prompt: "`kartenwert(\"ass\")` (klein geschrieben) bricht mit `NumberFormatException` ab. Warum?"
+    code: |
+      static int kartenwert(String karte) {
+          if (karte.equals("Ass")) {
+              return 11;
+          } else if (karte.equals("Bube") || karte.equals("Dame")
+                  || karte.equals("König")) {
+              return 10;
+          } else {
+              return Integer.parseInt(karte);
+          }
+      }
+    run: |
+      public class Main {
+      {code}
+          public static void main(String[] args) {
+              System.out.println(kartenwert("ass"));
+          }
+      }
+    expect: runtime_error
+    error_contains: "NumberFormatException"
+    answer: "**„ass“ ist ungleich „Ass“ und landet im `else`; `Integer.parseInt` kann daraus keine Zahl machen.**"
+    explanation: "`equals` beachtet Groß- und Kleinschreibung. `Integer.parseInt(\"6\")` liefert die Zahl 6, bei Text ohne Zahl wirft es eine `NumberFormatException`."
+    source: "VL 8, Folie 13"
+
+  - id: gdp-vl08-008
+    type: code
+    kind: predict
+    prompt: "Was gibt dieses Programm aus?"
+    code: |
+      int punkte = 18;
+      if (punkte > 21) {
+          System.out.println("drüber");
+      } else if (punkte >= 17) {
+          System.out.println("stehen");
+      } else if (punkte >= 12) {
+          System.out.println("überlegen");
+      } else {
+          System.out.println("ziehen");
+      }
+    answer: "stehen"
+    explanation: "In einer else-if-Kette läuft höchstens ein Zweig. Dass 18 auch `>= 12` ist, spielt keine Rolle mehr: Der erste Treffer entscheidet."
+    source: "VL 8, Folie 14"
+
+  - id: gdp-vl08-009
+    type: code
+    kind: predict
+    prompt: "Was gibt dieses Programm aus? (Achtung: einzelne `if`, keine Kette)"
+    code: |
+      int punkte = 18;
+      if (punkte > 21) {
+          System.out.println("drüber");
+      }
+      if (punkte >= 17) {
+          System.out.println("stehen");
+      }
+      if (punkte >= 12) {
+          System.out.println("überlegen");
+      }
+    answer: |
+      stehen
+      überlegen
+    explanation: "Bei einzelnen `if` wird jede Bedingung für sich geprüft. Einzelne `if` nimmt man, wenn mehrere Dinge gleichzeitig zutreffen dürfen; für genau eine Antwort `else if`."
+    source: "VL 8, Folie 15"
+
+  - id: gdp-vl08-010
+    type: code
+    kind: bug
+    prompt: "Bei 25 Punkten soll „drüber“ kommen. Das Programm gibt „überlegen“ aus. Was ist falsch?"
+    code: |
+      int punkte = 25;
+      if (punkte >= 12) {
+          System.out.println("überlegen");
+      } else if (punkte >= 17) {
+          System.out.println("stehen");
+      } else if (punkte > 21) {
+          System.out.println("drüber");
+      }
+    expect: wrong_output
+    wrong_output: "überlegen"
+    answer: "**Die Reihenfolge: `>= 12` ist schon wahr, der Rest wird übersprungen.** Die engste Bedingung (`> 21`) muss zuerst kommen."
+    explanation: "„stehen“ und „drüber“ kommen nie dran. Der Compiler meldet nichts; nur ein Testfall wie 25 Punkte findet den Fehler, einer mit 15 nicht. Testfälle so wählen, dass jeder Zweig einmal drankommt."
+    source: "VL 8, Folie 16"
+
+  - id: gdp-vl08-011
+    type: code
+    kind: predict
+    prompt: "`summe` zählt jedes Ass erst als 11 und zieht danach 10 ab, solange es nötig ist. Was gibt das Programm aus?"
+    code: |
+      int punkte = 0;
+      int asse = 0;
+      for (String karte : List.of("Ass", "5", "König", "Ass")) {
+          punkte += kartenwert(karte);
+          if (karte.equals("Ass")) {
+              asse++;
+          }
+      }
+      while (punkte > 21 && asse > 0) {
+          punkte -= 10;   // Ass zählt 1
+          asse--;
+      }
+      System.out.println(punkte);
+    run: |
+      import java.util.*;
+      public class Main {
+          static int kartenwert(String karte) {
+              if (karte.equals("Ass")) {
+                  return 11;
+              } else if (karte.equals("Bube") || karte.equals("Dame") || karte.equals("König")) {
+                  return 10;
+              } else {
+                  return Integer.parseInt(karte);
+              }
+          }
+          public static void main(String[] args) {
+      {code}
+          }
+      }
+    answer: "17"
+    explanation: "11 + 5 + 10 + 11 = 37. Über 21, also −10: 27. Immer noch über 21: 17. Beide Asse zählen 1. `punkte` ist ein Sammler, `asse` ein Zähler."
+    source: "VL 8, Folie 17–18"
+
+  - id: gdp-vl08-012
+    type: basic
+    front: "Beim Zählen einer BlackJack-Hand: Warum entscheidet `summe` erst **nach** der Schleife, ob ein Ass 1 oder 11 zählt?"
+    back: "**Erst wenn alle Karten bekannt sind, weiß man, ob ein Ass als 11 zu teuer wird.**"
+    extra: "Asse sind der Randfall. Dort irren sich Menschen und KI leicht. Darum gehören Hände mit Assen in die Testfälle, z. B. Ass, 5, König, Ass → 17."
+    source: "VL 8, Folie 17"
+    tags: [warum]
+
+  - id: gdp-vl08-013
+    type: code
+    kind: bug
+    prompt: "Eine KI schlägt diesen Rumpf für `summe` vor. Für Ass, 5, König liefert er 26 statt 16. Was ist der Denkfehler?"
+    code: |
+      int punkte = 0;
+      for (String karte : hand) {
+          int wert = kartenwert(karte);
+          if (wert == 11 && punkte + wert > 21) {
+              wert = 1;
+          }
+          punkte += wert;
+      }
+      return punkte;
+    run: |
+      import java.util.*;
+      public class Main {
+          static int kartenwert(String karte) {
+              if (karte.equals("Ass")) {
+                  return 11;
+              } else if (karte.equals("Bube") || karte.equals("Dame") || karte.equals("König")) {
+                  return 10;
+              } else {
+                  return Integer.parseInt(karte);
+              }
+          }
+          static int summe(List<String> hand) {
+      {code}
+          }
+          public static void main(String[] args) {
+              System.out.println(summe(List.of("Ass", "5", "König")));
+          }
+      }
+    expect: wrong_output
+    wrong_output: "26"
+    answer: "**Er entscheidet beim Ziehen über das Ass.** Ein Ass, das erst später zu teuer wird, zählt weiter 11."
+    explanation: "Die Tests Ass + König (21) und Ass, Ass, 9 (21) laufen trotzdem durch. Nur ein Test mit einem Ass, das später zu teuer wird, findet den Fehler. Deshalb schreiben Sie die Testfälle, nicht die KI."
+    source: "VL 8, Folie 20"
+
+  - id: gdp-vl08-014
+    type: basic
+    front: "In `dealerZug`: Warum zieht man mit `hand.add(stapel.remove(0))` und nicht mit `hand.add(stapel.get(0))`?"
+    back: "**`remove(0)` nimmt die Karte aus dem Stapel heraus, so kann keine Karte doppelt gezogen werden.**"
+    extra: "`remove` liefert das entfernte Element zurück. Die Schleife dazu ist die Regel vom Tisch: `while (summe(hand) <= 16)`."
+    source: "VL 8, Folie 21"
+
+  # ---------------------------------------------------------------- Python und JavaScript
+  - id: gdp-vl08-015
+    type: cloze
+    text: "Text vergleichen: in Java mit {{c1::`k.equals(\"Ass\")`}}, in Python mit {{c2::`k == \"Ass\"`}}, in JavaScript mit {{c3::`k === \"Ass\"`}}."
+    extra: "In Java vergleicht `==` bei Strings nur die Referenzen. JavaScripts `===` prüft Inhalt und Typ. Wer mit Python angefangen hat, schreibt in Java gern `==` bei Strings."
+    figure_back: "gdp-vl08-015.png"
+    source: "VL 8, Folie 25, 28"
+
+  - id: gdp-vl08-016
+    type: basic
+    front: "Python-Code hat keine geschweiften Klammern. Was legt dort fest, welche Zeilen zum Rumpf einer Schleife oder eines `if` gehören?"
+    back: "**Die Einrückung** (nach einem Doppelpunkt)."
+    extra: "In Java ist die Einrückung nur für Menschen; in Python ist sie die Struktur des Programms."
+    source: "VL 8, Folie 25, 29"
+
+  - id: gdp-vl08-017
+    type: code
+    kind: predict
+    lang: python
+    prompt: "Python: Was gibt diese Zeile aus? (In Java ergibt `7 / 2` die 3.)"
+    code: |
+      print(7 / 2)
+    answer: "3.5"
+    explanation: "Negativer Transfer: Was in Java richtig ist, kann in einer anderen Sprache falsch sein. In Python und JavaScript ergibt `7 / 2` die 3.5."
+    source: "VL 8, Folie 29"
+
+  - id: gdp-vl08-018
+    type: code
+    kind: predict
+    lang: javascript
+    prompt: "JavaScript: Was geben diese zwei Zeilen aus?"
+    code: |
+      console.log("5" + 1);
+      console.log(parseInt("ass"));
+    answer: |
+      51
+      NaN
+    explanation: "Wie Java hängt JavaScript bei Text + Zahl an (Python wirft einen TypeError). Wo Java eine NumberFormatException wirft, liefert JavaScript still `NaN` („not a number“) und rechnet weiter. JavaScript stürzt hier nicht ab; nur ein Test zeigt den Fehler."
+    source: "VL 8, Folie 29"
+
+  - id: gdp-vl08-019
+    type: code
+    kind: bug
+    lang: javascript
+    prompt: "JavaScript (von einer KI aus Python übersetzt, Asse weggelassen): `summe([\"König\", \"7\"])` gibt 1 aus statt 17. Warum?"
+    code: |
+      function summe(hand) {
+          let punkte = 0;
+          for (const karte in hand) {
+              punkte += kartenwert(karte);
+          }
+          return punkte;
+      }
+    expect: wrong_output
+    answer: "**`for … in` läuft in JavaScript über die Positionen \"0\" und \"1\", nicht über die Karten.** Richtig ist `for (const karte of hand)`."
+    explanation: "`kartenwert(\"0\")` + `kartenwert(\"1\")` = 0 + 1 = 1. In Python läuft `for karte in hand` wirklich über die Karten. Ein Wort Unterschied, kein Absturz, nur eine falsche Zahl."
+    source: "VL 8, Folie 30"
+
+  - id: gdp-vl08-020
+    type: code
+    kind: predict
+    lang: python
+    prompt: "Python: Was gibt das Programm aus? (`kartenwert` wie in Java: Ass 11, Bilder 10)"
+    code: |
+      def summe(hand):
+          punkte = 0
+          asse = 0
+          for karte in hand:
+              punkte += kartenwert(karte)
+              if karte == "Ass":
+                  asse += 1
+          while punkte > 21 and asse > 0:
+              punkte -= 10
+              asse -= 1
+          return punkte
+
+      print(summe(["Ass", "Ass", "König"]))
+    answer: "12"
+    explanation: "11 + 11 + 10 = 32, dann zweimal −10: 12. Mit `if` statt `while` würde nur ein Ass umgewertet, Ergebnis 22: verloren statt im Spiel."
+    source: "VL 8, Folie 26, 31"
+
+  - id: gdp-vl08-021
+    type: cloze
+    text: "Testfälle als Code: In Python prüft {{c1::`doctest`}} Aufrufe mit `>>>` im Docstring (zwischen `\"\"\"`) unter dem Funktionskopf, in JavaScript meldet sich {{c2::`console.assert`}} nur, wenn die Bedingung falsch ist."
+    extra: "Dieselbe Idee wie in Java: Aufruf, erwartetes Ergebnis, vergleichen. Später automatisch z. B. mit JUnit."
+    source: "VL 8, Folie 19, 32"
+
+  - id: gdp-vl08-022
+    type: basic
+    front: "Eine KI darf die Rümpfe von `kartenwert` und `summe` schreiben. Warum schreiben Sie die Testfälle trotzdem selbst?"
+    back: "**KI-Code sieht plausibel aus und kompiliert, kann aber an Randfällen scheitern. Das zeigen nur Testfälle mit erwartetem Ergebnis, die Sie selbst gewählt haben.**"
+    extra: "Arbeitsteilung: Zerlegen und Testfälle schreiben Sie; Rümpfe selbst oder per KI; prüfen und erklären wieder Sie. Die KI-Version von `summe` bestand zwei von drei Tests."
+    source: "VL 8, Folie 20, 33"
+    tags: [warum]

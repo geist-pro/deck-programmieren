@@ -1,0 +1,256 @@
+lecture:
+  id: gdp-vl04
+  deck: "VL 04 Wiederholung"
+  header: "GdP · VL 4 Wiederholung"
+  lang: de
+  support: |
+    class Film {
+        String titel;
+        int laenge;   // Minuten
+        public Film(String titel, int laenge) {
+            this.titel = titel;
+            this.laenge = laenge;
+        }
+        public int laengeMitWerbung(int werbung) { return this.laenge + werbung; }
+        public void ausgeben() { System.out.println(this.titel); }
+        public String info() { return this.titel + " (" + this.laenge + " min)"; }
+    }
+    class Filmabend {
+        Film erster;
+        Film zweiter;
+        public Filmabend(Film erster, Film zweiter) {
+            this.erster = erster;
+            this.zweiter = zweiter;
+        }
+        public int gesamtLaenge() { return this.erster.laenge + this.zweiter.laenge; }
+    }
+cards:
+  # ---------------------------------------------------------------- Rechnen: Fallen und Muster
+  - id: gdp-vl04-001
+    type: code
+    kind: predict
+    prompt: "Celsius in Fahrenheit (F = 9/5 · C + 32). Was gibt dieses Programm aus?"
+    code: |
+      int c = 10;   // Grad Celsius
+      System.out.println(9 / 5 * c + 32);
+    answer: "42"
+    explanation: "Von links: `9 / 5` sind zwei `int`, also 1. Dann 1 · 10 = 10, plus 32 = 42. Mit `9.0 / 5 * c + 32` käme 50.0 heraus."
+    source: "VL 4, Folie 7"
+
+  - id: gdp-vl04-002
+    type: cloze
+    text: "Einen verdächtigen Ausdruck auf Papier auswerten: zuerst {{c1::die Werte einsetzen}}, dann {{c2::von links nach rechts}} rechnen, dabei Punkt vor Strich."
+    extra: "Bei jeder Division prüfen: Sind beide Seiten `int`? Dann fällt der Rest weg."
+    source: "VL 4, Folie 7"
+
+  - id: gdp-vl04-003
+    type: code
+    kind: fill
+    prompt: "Ergänze die beiden Operatoren, damit die Filmlänge in Stunden und Minuten ausgegeben wird."
+    code: |
+      int laenge = 95;
+      int stunden = laenge {{c1::/}} 60;
+      int minuten = laenge {{c2::%}} 60;
+      System.out.println(stunden + " h " + minuten + " min");
+    answer: "1 h 35 min"
+    explanation: "Ganzzahldivision liefert die vollen Stunden, `%` den Rest. Probe: 1 · 60 + 35 = 95. Dasselbe Muster zerlegt Cent in Euro und Cent oder Sekunden in Minuten."
+    source: "VL 4, Folie 8"
+
+  - id: gdp-vl04-004
+    type: code
+    kind: predict
+    prompt: "Was gibt dieses Programm aus?"
+    code: |
+      System.out.println("Gäste: " + 2 + 3);
+    answer: "Gäste: 23"
+    explanation: "Java rechnet von links: `\"Gäste: \" + 2` ist schon ein String, daran wird die 3 angehängt. Mit Klammern, `\"Gäste: \" + (2 + 3)`, käme `Gäste: 5` heraus."
+    source: "VL 4, Folie 28, 35"
+
+  - id: gdp-vl04-005
+    type: code
+    kind: bug
+    prompt: "4 von 120 Kinoplätzen sind belegt. Die Auslastung in Prozent soll ausgegeben werden, es erscheint aber 0. Warum?"
+    code: |
+      int belegt = 4;
+      int plaetze = 120;
+      System.out.println(belegt / plaetze * 100);
+    expect: wrong_output
+    wrong_output: "0"
+    answer: "**`belegt / plaetze` ist eine Ganzzahldivision: 4 / 120 ergibt 0, und 0 · 100 bleibt 0.**"
+    explanation: "Richtig: `belegt * 100.0 / plaetze`, das ergibt rund 3.33. Erst multiplizieren, und ein `double` muss beteiligt sein, bevor geteilt wird."
+    source: "VL 4, Folie 10"
+
+  - id: gdp-vl04-006
+    type: code
+    kind: bug
+    prompt: "Warum kompiliert Zeile 1 nicht?"
+    code: |
+      double preis = 9,50;
+      System.out.println(preis);
+    expect: compile_error
+    answer: "**Komma statt Punkt.** In Java ist der Dezimaltrenner ein Punkt: `9.50`."
+    explanation: "Ein typischer Anfängerfehler, weil man Kommazahlen im Deutschen mit Komma schreibt."
+    source: "VL 4, Folie 10"
+
+  - id: gdp-vl04-007
+    type: basic
+    front: "`String laenge = \"141 Minuten\";` sieht in der Ausgabe gut aus. Warum ist `int laenge = 141;` trotzdem besser?"
+    back: "**Mit `int` kann man rechnen (`laenge + 15` ergibt 156), mit dem Text nicht.**"
+    extra: "Den Typ nach der späteren Verwendung wählen: rechnen, vergleichen oder nur anzeigen? Den Text baut man erst bei der Ausgabe. Ebenso `boolean in3D = true;` statt `\"ja\"`."
+    source: "VL 4, Folie 6"
+    tags: [warum]
+
+  - id: gdp-vl04-008
+    type: code
+    kind: predict
+    prompt: "Nach wie vielen Minuten ist Halbzeit? Was gibt dieses Programm aus?"
+    code: |
+      Film a = new Film("Der Marsianer", 141);
+      double halbzeit = a.laenge / 2;
+      System.out.println(halbzeit);
+    answer: "70.0"
+    explanation: "`a.laenge` ist ein `int`, 2 auch: 141 / 2 ergibt 70, der Rest fällt weg. Erst danach wird 70 im `double` zu 70.0. Richtig: `a.laenge / 2.0` ergibt 70.5."
+    source: "VL 4, Folie 7, 12, 29"
+
+  # ---------------------------------------------------------------- Objekte und Konstruktoren
+  - id: gdp-vl04-009
+    type: code
+    kind: bug
+    prompt: "Warum kompiliert Zeile 9 nicht?"
+    code: |
+      class Film {
+          String titel;
+          public void Film(String titel) {
+              this.titel = titel;
+          }
+      }
+      public class Kino {
+          public static void main(String[] args) {
+              Film f = new Film("Paddington");
+          }
+      }
+    support: ""
+    expect: compile_error
+    answer: "**Durch `void` ist `Film(...)` in Zeile 3 kein Konstruktor, sondern eine gewöhnliche Methode.** Es gibt also keinen Konstruktor, der einen String nimmt."
+    explanation: "Ein Konstruktor heißt genau wie die Klasse und hat keinen Rückgabetyp, auch nicht `void`. Richtig: `public Film(String titel)`."
+    source: "VL 4, Folie 13"
+
+  # ---------------------------------------------------------------- Methoden: return, void, Kopien
+  - id: gdp-vl04-010
+    type: code
+    kind: predict
+    prompt: "Was gibt dieses Programm aus?"
+    code: |
+      // Film: int laengeMitWerbung(int werbung) { return this.laenge + werbung; }
+      Film f = new Film("Der Marsianer", 141);
+      f.laengeMitWerbung(20);
+      System.out.println(f.laenge);
+    answer: "141"
+    explanation: "Die Methode rechnet 161 aus und gibt es zurück, ändert aber das Attribut nicht. Weil niemand den Rückgabewert speichert, geht die 161 verloren. Richtig: `int gesamt = f.laengeMitWerbung(20);`."
+    source: "VL 4, Folie 16, 18"
+
+  - id: gdp-vl04-011
+    type: code
+    kind: predict
+    prompt: "Was gibt `main` aus?"
+    code: |
+      static int mitWerbung(int minuten) {
+          return minuten + 20;
+      }
+
+      public static void main(String[] args) {
+          mitWerbung(100);
+          System.out.println(mitWerbung(mitWerbung(95)));
+      }
+    run: |
+      public class Main {
+      {code}
+      }
+    answer: "135"
+    explanation: "`mitWerbung(100)` liefert 120, aber niemand speichert oder gibt es aus. Innen wird zuerst `mitWerbung(95)` = 115 berechnet, dann `mitWerbung(115)` = 135. Nur `println` gibt etwas aus."
+    source: "VL 4, Folie 18, 32, 37"
+
+  - id: gdp-vl04-012
+    type: code
+    kind: bug
+    prompt: "Warum kompiliert Zeile 2 nicht?"
+    code: |
+      Film f = new Film("Der Marsianer", 141);
+      System.out.println(f.ausgeben());
+    expect: compile_error
+    error_contains: "'void' type not allowed here"
+    answer: "**`ausgeben()` ist `void` und liefert keinen Wert, den `println` ausgeben könnte.**"
+    explanation: "Entweder nur `f.ausgeben();` aufrufen, oder die Methode mit Rückgabewert nutzen: `System.out.println(f.info());`. Wer weiterverarbeiten will, braucht `return`, nicht `println`."
+    source: "VL 4, Folie 17–18"
+
+  - id: gdp-vl04-013
+    type: code
+    kind: predict
+    prompt: "Was gibt `main` aus?"
+    code: |
+      static void verlaengereZahl(int laenge) {
+          laenge = laenge + 10;
+      }
+      static void verlaengereFilm(Film f) {
+          f.laenge = f.laenge + 10;
+      }
+      public static void main(String[] args) {
+          int zahl = 141;
+          verlaengereZahl(zahl);
+          Film film = new Film("Der Marsianer", 141);
+          verlaengereFilm(film);
+          System.out.println(zahl + " / " + film.laenge);
+      }
+    run: |
+      public class Main {
+      {code}
+      }
+    answer: "141 / 151"
+    explanation: "Java kopiert immer. Bei der Zahl die Zahl: Die Methode ändert nur ihre Kopie. Beim Film den Verweis: Beide Kopien zeigen auf dasselbe Objekt, also wird dessen Länge 151."
+    source: "VL 4, Folie 20"
+
+  - id: gdp-vl04-014
+    type: code
+    kind: bug
+    prompt: "Warum stürzt Zeile 3 ab?"
+    code: |
+      Film a = new Film("Der Marsianer", 141);
+      Filmabend abend = new Filmabend(a, null);
+      System.out.println(abend.gesamtLaenge());
+    expect: runtime_error
+    error_contains: "NullPointerException"
+    answer: "**`gesamtLaenge()` liest `this.zweiter.laenge`, aber `zweiter` ist `null`: `NullPointerException`.**"
+    explanation: "`this.zweiter` ist ein Film, `this.zweiter.laenge` dessen Länge. Gibt es den Film nicht, gibt es auch keine Länge."
+    source: "VL 4, Folie 21"
+
+  - id: gdp-vl04-015
+    type: basic
+    front: "Eclipse: Warum benennt man eine schlecht benannte Variable (`a` → `titel`) mit Refactor › Rename um und nicht mit Suchen und Ersetzen?"
+    back: "**Rename ändert nur diese eine Variable, und zwar überall, wo sie benutzt wird.** Suchen und Ersetzen trifft jedes `a` im Text."
+    extra: "Weitere Kürzel: `sysout` + Strg+Leertaste schreibt `System.out.println()`; Strg+Umschalt+F formatiert den Code (fehlende Klammern fallen dann an der Einrückung auf)."
+    source: "VL 4, Folie 9, 23"
+
+  # ---------------------------------------------------------------- Ergänzt beim Faktencheck (Folien 10, 19)
+  - id: gdp-vl04-016
+    type: code
+    kind: fill
+    prompt: "`inMinuten` ist eine `static`-Methode der Klasse `Rechner`. Ergänze den Aufruf in `main` (ohne `new`)."
+    code: |
+      int laenge = {{c1::Rechner}}.inMinuten(2, 21);
+      System.out.println(laenge);
+    support: |
+      class Rechner {
+          public static int inMinuten(int stunden, int minuten) {
+              return stunden * 60 + minuten;
+          }
+      }
+    answer: "141"
+    explanation: "Eine Klassenmethode gehört zur Klasse, kein Objekt nötig. Aufruf: `Klassenname.methode(…)`. Gut für Rechnungen, die kein Objekt brauchen."
+    source: "VL 4, Folie 19"
+
+  - id: gdp-vl04-017
+    type: basic
+    front: "In der Datei `Kino.java` steht `public class kino { … }`. Was passiert, und warum?"
+    back: "**Der Compiler meldet einen Fehler: Eine öffentliche Klasse muss genauso heißen wie ihre Datei, auch in der Großschreibung.**"
+    extra: "Richtig: `public class Kino` in `Kino.java`. Klassennamen schreibt man vorne groß."
+    source: "VL 4, Folie 10"

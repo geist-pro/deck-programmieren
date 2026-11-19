@@ -1,0 +1,153 @@
+# English translation overlay for cards/gdp/vl02-2-zahlen-objekte.yaml.
+# Only text fields; code, run, answers of predict cards and figures come from the German file.
+# Identifiers in code stay German, exactly as on the slides (Gast, geburtsjahr, Buchung, ...).
+lecture:
+  deck: "L02.2 Numbers & Objects"
+  header: "GdP · L2.2 Numbers & Objects"
+cards:
+  - id: gdp-vl02-2-001
+    prompt: "What does this program print?"
+    explanation: "First `3 / 4`: two `int`, so integer division, result 0. Then `0 + 5` = 5, still `int`. Only when it is stored in `d` does it become 5.0."
+    source: "L2.2, slide 7"
+  - id: gdp-vl02-2-002
+    front: "`double d = 3 / 4 + 5;` Why doesn't the `double` on the left help against the integer division on the right?"
+    back: "**Java computes the right side first. The type of the variable on the left changes nothing about the calculation.**"
+    extra: "For 5.75 a `double` has to be in the calculation itself, e.g. `3.0 / 4 + 5`."
+    source: "L2.2, slide 7"
+  - id: gdp-vl02-2-003
+    text: "Type of an expression in Java: if both values are `int`, the result is {{c1::`int`}}. If a `double` is involved, the other value is first turned {{c2::into a `double`}}, and the result is `double`."
+    extra: "`11 / 4` gives 2, `11.0 / 4` and `11 / 4.0` both give 2.75. It doesn't matter on which side the `double` is."
+    source: "L2.2, slide 8"
+  - id: gdp-vl02-2-004
+    prompt: "What does this program print?"
+    explanation: "`/` and `*` have the same precedence, Java computes left to right. First `7 / 2` with two `int`: 3. Then `3 * 2.0` = 6.0. The remainder was already lost before the `double` came in."
+    source: "L2.2, slide 8"
+  - id: gdp-vl02-2-005
+    prompt: "What does this program print?"
+    explanation: "Left to right: `2.0 * 7` = 14.0 is already a `double`, then `14.0 / 2` = 7.0. Same numbers as in `7 / 2 * 2.0`, different order, different result."
+    source: "L2.2, slide 8"
+  - id: gdp-vl02-2-006
+    front: "For values from 0 to 100, `byte` would be big enough. Why do you still use `int` in Java?"
+    back: "**`byte` and `short` become `int` anyway when you compute with them. You then need casts to write the result back, and for one variable you save almost nothing.**"
+    extra: "Default: `int` and `double`. Use `byte`/`short` only when memory really matters, e.g. with very large amounts of data."
+    source: "L2.2, slides 5, 8"
+  - id: gdp-vl02-2-007
+    text: "Type conversion: from `int` to `double` Java converts {{c1::automatically}}. From `double` to `int` only with {{c2::a cast like `(int) schnitt`}}."
+    extra: "With `int` → `double` nothing is lost (3 becomes 3.0). With `double` → `int` the decimal places are lost."
+    source: "L2.2, slide 10"
+  - id: gdp-vl02-2-008
+    prompt: "What does this program print?"
+    explanation: "The cast `(int)` cuts off, it does not round. For rounding there is `Math.round`."
+    source: "L2.2, slide 10"
+  - id: gdp-vl02-2-009
+    prompt: "For line 2 `javac` reports: `possible lossy conversion from double to int`. What does this mean?"
+    answer: "**A `double` is supposed to go into an `int` without a cast. The decimal places would be lost.**"
+    explanation: "Java wants you to decide this on purpose: `int ganz = (int) schnitt;`. Eclipse reports the same error as \"Type mismatch: cannot convert from double to int\"."
+    source: "L2.2, slide 10"
+  - id: gdp-vl02-2-010
+    prompt: "What does this program print?"
+    explanation: "The parentheses force `a / b` with two `int` first: 3. Only after that does the 3 become 3.0. Too late, the remainder is already gone."
+    source: "L2.2, slide 11"
+  - id: gdp-vl02-2-011
+    prompt: "What does this program print?"
+    explanation: "The cast binds more tightly than the division and applies only to the value directly after it: `a` becomes 7.0, then 7.0 / 2 = 3.5. This is how you rescue averages from `summe / anzahl` (sum / count)."
+    source: "L2.2, slide 11"
+  - id: gdp-vl02-2-012
+    front: "`int jahr = 31536000;` (seconds per year). What happens with `int hundert = jahr * 100;`, and why is that dangerous?"
+    back: "**Overflow: the result does not fit into an `int` and jumps into the negative (−1141367296). There is no error and no warning.**"
+    extra: "The largest `int` is 2147483647 (`Integer.MAX_VALUE`). As with an odometer, the largest value is followed by the smallest. You only notice if you know the expected order of magnitude."
+    source: "L2.2, slides 13–14"
+  - id: gdp-vl02-2-013
+    prompt: "Add one character so that the multiplication is done in `long` and the correct result comes out."
+    explanation: "The `L` turns the 100 into a `long` literal. If one value is `long`, Java does the whole multiplication in `long` (64 bits). Alternative: `Math.multiplyExact(jahr, 100)` stops with an error on overflow instead of silently computing the wrong result."
+    source: "L2.2, slide 13"
+  - id: gdp-vl02-2-014
+    prompt: "What does this program print?"
+    explanation: "In binary, 0.1 is infinitely long (like 1/3 in decimal). A `double` only stores the nearest representable number: `0.1 * 3` gives 0.30000000000000004."
+    source: "L2.2, slide 15"
+  - id: gdp-vl02-2-015
+    front: "How do you correctly compare two `double` values `x` and `y` for equality?"
+    back: "**Via a small distance: `Math.abs(x - y) < eps`, never with `==`.**"
+    extra: "`Math.abs` gives the absolute value of the difference. For example eps = 1e-9, one billionth: if the distance is smaller, the values count as equal."
+    source: "L2.2, slide 15"
+  - id: gdp-vl02-2-016
+    front: "Hotel without classes: `gast1Name`, `gast1Jahr`, `gast2Name`, `gast2Jahr` … (*gast* = guest, *jahr* = year). What is the real problem here, apart from the number of variables?"
+    back: "**Nothing tells Java that `gast1Name` and `gast1Jahr` belong together.** That is only in the name."
+    extra: "A typo like `gast2Jahr` instead of `gast1Jahr` goes unnoticed. Solution: what belongs together becomes a type of its own, a class."
+    source: "L2.2, slide 18"
+  - id: gdp-vl02-2-017
+    text: "`public class Gast { String name; int geburtsjahr; boolean stammgast; }` (guest; birth year, regular guest) defines a {{c1::new type}}. After that, `Gast ada;` is a valid declaration, just like `int alter;`."
+    extra: "The variables in a class are called attributes. The class lives in a file of its own, `Gast.java`."
+    source: "L2.2, slide 19"
+  - id: gdp-vl02-2-018
+    prompt: "The class `Gast` has no constructor of its own. What does this program print?"
+    explanation: "Attributes automatically get default values: numbers 0 or 0.0, `boolean` `false`, all object types (including `String`) `null`."
+    source: "L2.2, slide 22"
+  - id: gdp-vl02-2-019
+    front: "`ben.name` is `null`. What does `null` mean, and what happens with `ben.name.length()`?"
+    back: "**`null` means: the variable points to no object. `ben.name.length()` crashes with a `NullPointerException`.**"
+    extra: "`null` is not the text \"null\", even though `println` prints it that way."
+    source: "L2.2, slide 22"
+  - id: gdp-vl02-2-020
+    front: "Attributes get default values. Why does `int gaeste; System.out.println(gaeste);` in `main` still give an error?"
+    back: "**Only attributes get default values, local variables in a method do not.**"
+    extra: "The message reads \"may not have been initialized\" (Eclipse) or \"might not have been initialized\" (javac)."
+    source: "L2.2, slide 22"
+  - id: gdp-vl02-2-021
+    text: "A constructor in Java has {{c1::exactly the same name as the class}} and has {{c2::no return type, not even `void`}}."
+    extra: "Example: `public Gast(String name, int geburtsjahr) { this.name = name; this.geburtsjahr = geburtsjahr; }`. Attributes it does not set keep their default value."
+    source: "L2.2, slide 23"
+  - id: gdp-vl02-2-022
+    front: "The constructor `Gast(String name, …)` contains `this.name = name;`. What is `this.name`, and what is `name`?"
+    back: "**`this.name` is the attribute of the object being built right now. `name` on its own is the parameter.**"
+    extra: "The line copies the parameter into the attribute. Recommendation: always write attributes with `this`, then you see at once what is an attribute and what is a parameter."
+    source: "L2.2, slide 23"
+  - id: gdp-vl02-2-023
+    prompt: "`Gast` only has the constructor `Gast(String name, int geburtsjahr)`. Why does line 1 not compile?"
+    answer: "**As soon as there is a constructor with parameters, `new Gast()` no longer exists automatically.**"
+    explanation: "If you want both, you also write an empty constructor. Likewise, `new Gast(1998, \"Ada\")` does not compile: the arguments are matched to the parameters in order."
+    source: "L2.2, slides 23–24"
+  - id: gdp-vl02-2-024
+    prompt: "The program compiles and runs, but prints `null` instead of \"Ada\". Which line is wrong, and why?"
+    answer: "**Line 5: `name = name;` assigns the parameter to itself.** Correct: `this.name = name;`."
+    explanation: "In the constructor the parameter `name` hides the attribute with the same name. The attribute stays `null`. `javac` says nothing about it. Eclipse only marks the line yellow: \"The assignment to variable name has no effect\"."
+    source: "L2.2, slide 25"
+  - id: gdp-vl02-2-025
+    text: "`new Gast(\"Ada Brandt\", 1998)` runs in three steps: {{c1::memory}} (create an object with default values), {{c2::constructor}} (set the attributes from the arguments), {{c3::reference}} (the variable refers to the finished object)."
+    source: "L2.2, slide 24"
+  - id: gdp-vl02-2-026
+    front: "`int jahr = 1998;` `Gast ada = new Gast(\"Ada Brandt\", 1998);` `Gast auchAda = ada;` (*auch* = also) What is in `jahr`, what is in `ada`, and what does the third line copy?"
+    back: "**`jahr` holds the number itself, `ada` only a reference to the object. Line 3 copies the reference, not the object: there is only one Ada.**"
+    source: "L2.2, slide 27"
+  - id: gdp-vl02-2-027
+    text: "`int`, `double`, `boolean`, `char` are called {{c1::primitive types}}: their value is stored directly in the variable. All classes, including `String`, are called {{c2::reference types}}: the variable holds a reference."
+    source: "L2.2, slide 27"
+  - id: gdp-vl02-2-028
+    prompt: "What does this program print?"
+    explanation: "`b = a` only copies the reference. `a` and `b` point to the same object; you see the change made via `b` via `a`. With `int x = 5; int y = x; x = 7;`, on the other hand, `y` stays 5: there the value itself is in the variable."
+    source: "L2.2, slides 4, 28"
+  - id: gdp-vl02-2-029
+    prompt: "What does this program print?"
+    explanation: "For objects, `==` checks whether it is the same object. `name` (*vorname* = first name) is newly built, the literal is a different object. `equals` checks whether the same text is inside. Always compare texts with `equals`."
+    source: "L2.2, slide 29"
+  - id: gdp-vl02-2-030
+    prompt: "`Buchung` (booking) has the attributes `Gast gast` and `int naechte` (nights). Why does line 3 crash?"
+    answer: "**`b.gast` was never set and is `null`. You cannot read a `name` from `null`: `NullPointerException`.**"
+    explanation: "Missing is, e.g., `b.gast = new Gast(\"Ada Brandt\", 1998);`. You read the chain `b.gast.name` from the left: booking → its guest → the guest's name."
+    source: "L2.2, slide 30"
+  - id: gdp-vl02-2-031
+    prompt: "What does this program print?"
+    explanation: "Each division decides for itself. `10 / 4` is two `int`: 2. `7 / 2.0` has a `double`: 3.5. The sum is 5.5. If you expect 6.0, you are computing both divisions with decimal numbers."
+    source: "L2.2, slide 9"
+  - id: gdp-vl02-2-032
+    text: "Storing amounts of money exactly: as whole {{c1::cents}} in an `int` or `long`, or with the library class {{c2::`BigDecimal`}}."
+    extra: "`double` is accurate enough for most purposes, but small errors can add up. With whole cents you have to watch the value range (overflow)."
+    source: "L2.2, slide 16"
+  - id: gdp-vl02-2-033
+    prompt: "Complete line 1 so that a new `Gast` object is created."
+    explanation: "`new Gast()` builds a new object. With the dot you read and set its attributes: `ada.name` is the name of `ada`. Here `Gast` does not yet have a constructor of its own."
+    source: "L2.2, slide 20"
+  - id: gdp-vl02-2-034
+    text: "An object is also called an {{c1::instance}} of a class. Each object has {{c2::its own values}} in its attributes: if you change `ada`, `ben` stays as he is."
+    extra: "Class = blueprint, object = one concrete guest built from this plan."
+    source: "L2.2, slide 21"

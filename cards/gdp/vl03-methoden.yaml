@@ -1,0 +1,352 @@
+lecture:
+  id: gdp-vl03
+  deck: "VL 03 Methoden"
+  header: "GdP · VL 3 Methoden"
+  lang: de
+  support: |
+    class Gast {
+        static final int CHECK_IN_AB = 15;
+        String name;
+        int geburtsjahr;
+        boolean stammgast;
+        Gast(String name, int geburtsjahr) {
+            this.name = name;
+            this.geburtsjahr = geburtsjahr;
+        }
+        int alterIm(int jahr) { return jahr - this.geburtsjahr; }
+        String anrede() { return "Hallo " + this.name; }
+        void wirdStammgast() { this.stammgast = true; }
+    }
+cards:
+  # ---------------------------------------------------------------- Teil 1: Methoden
+  - id: gdp-vl03-001
+    type: basic
+    front: "Drei Zeilen rechnen jeweils `preis - preis * 10 / 100`. Welches Risiko entsteht, wenn der Rabatt auf 15 % steigt?"
+    back: "**Man muss mehrere Stellen ändern, und eine vergessene Stelle fällt nicht auf.**"
+    extra: "Das Programm kompiliert trotzdem und rechnet falsch. Darum bekommt die Rechnung einen Namen und steht nur einmal im Programm: als Methode."
+    source: "VL 3, Folie 6"
+    tags: [warum]
+
+  - id: gdp-vl03-002
+    type: cloze
+    text: "Im Methodenkopf `public static double mitRabatt(double preis, int prozent)` ist `double` der {{c1::Rückgabetyp}}, `mitRabatt` der {{c2::Methodenname}} und `double preis, int prozent` sind die {{c3::Parameter}}."
+    extra: "Rückgabetyp = was herauskommt. Parameter = was hineingeht, jeweils mit Typ und Name."
+    source: "VL 3, Folie 7"
+
+  - id: gdp-vl03-003
+    type: basic
+    front: "Was gehört in Java zur **Signatur** einer Methode, und was gehört nur zum Methodenkopf?"
+    back: "**Signatur = Name + Parametertypen.** Der Rückgabetyp gehört nicht zur Signatur."
+    extra: "Der Methodenkopf ist die ganze erste Zeile, z. B. `public static double mitRabatt(double preis, int prozent)`. Die Signatur ist `mitRabatt(double, int)`. Wichtig für das Überladen."
+    source: "VL 3, Folie 7"
+
+  - id: gdp-vl03-004
+    type: code
+    kind: predict
+    prompt: "Was gibt dieses Programm aus?"
+    code: |
+      int prozent = 10;
+      double preis = 200.0;
+      System.out.println(prozent / 100 * preis);
+      System.out.println(preis * prozent / 100);
+    answer: |
+      0.0
+      20.0
+    explanation: "Java rechnet von links nach rechts. Zeile 3: zuerst `prozent / 100`, beide `int`, also Ganzzahldivision: `0`. Erst danach kommt der `double` dazu: `0 * 200.0` ergibt `0.0`. Zeile 4: zuerst `preis * prozent` = `2000.0`, hier ist schon ein `double` beteiligt, dann `/ 100` = `20.0`."
+    source: "VL 3, Folie 7"
+
+  - id: gdp-vl03-005
+    type: cloze
+    text: "Methodennamen: Tut die Methode etwas, nimmt man {{c1::ein Verb}} (`einchecken()`). Beantwortet sie eine Ja-Nein-Frage, beginnt der Name mit {{c2::„ist“ oder „hat“}} (`istStammgast()`)."
+    extra: "Liefert sie einen Wert, nennt man das, was herauskommt: `mitRabatt(100.0, 10)`. Methoden erkennt man an den Klammern, geschrieben wird in camelCase."
+    source: "VL 3, Folie 8"
+
+  # ---------------------------------------------------------------- Teil 2: Testen und return
+  - id: gdp-vl03-006
+    type: basic
+    front: "„Testfälle zuerst“: Warum rechnet man die erwarteten Ergebnisse von Hand aus, **bevor** man den Rumpf einer Methode schreibt?"
+    back: "**Nur wer das erwartete Ergebnis kennt, merkt, wenn der Code falsch liegt.**"
+    extra: "Das gilt auch für Code von einer KI: Ohne eigene Testfälle prüft man den Code nur gegen den Code. Eine Testfall-Tabelle hat drei Spalten: Aufruf, erwartetes Ergebnis, warum dieser Fall."
+    source: "VL 3, Folie 10"
+    tags: [warum]
+
+  - id: gdp-vl03-007
+    type: basic
+    front: "Was ist beim Testen einer Methode ein **Randfall**? Nenne ein Beispiel für `mitRabatt(preis, prozent)`."
+    back: "**Ein Fall am Rand des erlaubten Bereichs**, z. B. `mitRabatt(50.0, 0)` → `50.0` oder `mitRabatt(80.0, 100)` → `0.0` (auch: Preis 0, negativer Rabatt)."
+    extra: "An Randfällen ist Code am häufigsten falsch. Manche Randfälle sind eine Entscheidung, keine Rechenfrage: Was soll bei 150 % passieren?"
+    source: "VL 3, Folie 10"
+
+  - id: gdp-vl03-008
+    type: basic
+    front: "Was ist der Unterschied zwischen `return` und `System.out.println` in einer Methode?"
+    back: "**`return` liefert den Wert an den Aufrufer. `println` zeigt ihn nur auf der Konsole an.**"
+    extra: "Die Konsole ist für Menschen. Weiterrechnen kann nur, wer den Wert mit `return` bekommt. Faustregel: zurückgeben, nicht ausgeben."
+    source: "VL 3, Folie 13"
+
+  - id: gdp-vl03-009
+    type: code
+    kind: predict
+    prompt: "Was gibt `main` aus?"
+    code: |
+      static int f(int x) {
+          System.out.println(x);
+          return x + 1;
+      }
+
+      public static void main(String[] args) {
+          int y = f(2);
+          System.out.println(y);
+      }
+    run: |
+      public class Main {
+      {code}
+      }
+    answer: |
+      2
+      3
+    explanation: "Die `2` kommt vom `println` in `f`. Die `3` ist der Rückgabewert: Er landet in `y`, und `main` gibt ihn aus. `return` selbst schreibt nichts auf die Konsole."
+    source: "VL 3, Folie 14"
+
+  - id: gdp-vl03-010
+    type: code
+    kind: bug
+    prompt: "Warum kompiliert Zeile 6 nicht?"
+    code: |
+      static void zeigeQuadrat(int x) {
+          System.out.println(x * x);
+      }
+
+      public static void main(String[] args) {
+          int b = zeigeQuadrat(3);
+      }
+    run: |
+      public class Main {
+      {code}
+      }
+    expect: compile_error
+    answer: "**`zeigeQuadrat` ist `void` und liefert nichts.** Nichts kann man keiner Variablen zuweisen."
+    explanation: "Die 9 erscheint zwar auf der Konsole, aber das ist nur eine Anzeige. Lösung: `static int quadrat(int x) { return x * x; }`."
+    source: "VL 3, Folie 13"
+
+  - id: gdp-vl03-011
+    type: code
+    kind: bug
+    prompt: "Der Compiler meldet in Zeile 4 einen Fehler. Welchen, und warum?"
+    code: |
+      static void begruesse() {
+          System.out.println("Hallo");
+          return;
+          System.out.println("Willkommen!");
+      }
+    run: |
+      public class Main {
+      {code}
+          public static void main(String[] args) { begruesse(); }
+      }
+    expect: compile_error
+    error_contains: "unreachable"
+    answer: "**Unreachable code:** `return` beendet die Methode sofort, Zeile 4 kann nie laufen."
+    explanation: "`return;` ohne Wert ist in einer `void`-Methode erlaubt. Es darf nur kein Code dahinter stehen, der nie erreicht wird."
+    source: "VL 3, Folie 15"
+
+  - id: gdp-vl03-012
+    type: cloze
+    text: "Hat eine Methode einen Rückgabetyp (ist also nicht `void`), muss {{c1::jeder Weg durch die Methode}} mit {{c2::`return` und einem Wert}} enden."
+    extra: "Umgekehrt ist `return;` ohne Wert in einer `void`-Methode erlaubt und beendet sie früher."
+    source: "VL 3, Folie 15"
+
+  # ---------------------------------------------------------------- Teil 3: Methoden für Objekte
+  - id: gdp-vl03-013
+    type: basic
+    front: "Beim Aufruf `ada.alterIm(2026)`: Wofür steht `this` innerhalb von `alterIm`?"
+    back: "**Für das Objekt, an dem die Methode aufgerufen wird**, hier `ada`."
+    extra: "Bei `ben.alterIm(2026)` wäre `this` der Ben. Dieselbe Methode arbeitet jedes Mal mit einem anderen Objekt. Im Konstruktor hat `this` dieselbe Bedeutung."
+    source: "VL 3, Folie 17–18"
+
+  - id: gdp-vl03-014
+    type: code
+    kind: predict
+    prompt: "Was gibt dieses Programm aus?"
+    code: |
+      // Gast: int alterIm(int jahr) { return jahr - geburtsjahr; }
+      Gast ada = new Gast("Ada", 1998);
+      Gast ben = new Gast("Ben", 2004);
+      System.out.println(ben.alterIm(2026));
+    answer: "22"
+    explanation: "`this` ist das Objekt vor dem Punkt, also `ben` mit Geburtsjahr 2004: 2026 − 2004 = 22."
+    source: "VL 3, Folie 17–18"
+
+  - id: gdp-vl03-015
+    type: basic
+    front: "Warum hat die Klasse `Gast` kein Attribut `alter`, sondern eine Methode `alterIm(int jahr)`?"
+    back: "**Das Alter ändert sich jedes Jahr, das Geburtsjahr nie.** Ein berechnetes Alter ist nie veraltet."
+    source: "VL 3, Folie 17"
+    tags: [warum]
+
+  - id: gdp-vl03-016
+    type: code
+    kind: bug
+    prompt: "Warum kompiliert Zeile 2 nicht?"
+    code: |
+      Gast ada = new Gast("Ada Brandt", 1998);
+      System.out.println(ada.anrede);
+    expect: compile_error
+    answer: "**Die Klammern fehlen:** `ada.anrede()`."
+    explanation: "Ohne Klammern sucht Java ein *Attribut* `anrede` und findet keins. Klammern gehören auch dann zum Aufruf, wenn es keine Argumente gibt."
+    source: "VL 3, Folie 18"
+
+  - id: gdp-vl03-017
+    type: basic
+    front: "Wie entscheidet man, ob eine Methode eine **Objektmethode** oder eine **`static`-Methode** (Klassenmethode) wird?"
+    back: "**Braucht sie die Daten eines bestimmten Objekts → Objektmethode. Rechnet sie nur mit ihren Parametern → `static`.**"
+    extra: "Objektmethode: `ada.anrede()`. Klassenmethode: `Rabatt.mitRabatt(100.0, 10)`, `Math.abs(x)`, `main`. Innerhalb derselben Klasse reicht der Name ohne Klassennamen."
+    source: "VL 3, Folie 19"
+
+  - id: gdp-vl03-018
+    type: basic
+    front: "Warum gibt es in einer `static`-Methode kein `this`?"
+    back: "**Sie wird an keinem Objekt aufgerufen, sondern gehört zur Klasse.**"
+    extra: "Folge: Eine `static`-Methode kann nicht auf die Attribute eines Objekts zugreifen. Konstanten der Klasse (`static final`) darf sie benutzen."
+    source: "VL 3, Folie 19"
+    tags: [warum]
+
+  - id: gdp-vl03-019
+    type: code
+    kind: error
+    prompt: "Eclipse meldet zu Zeile 4: `Cannot make a static reference to the non-static field name` (javac: `non-static variable name cannot be referenced from a static context`). Was bedeutet das?"
+    code: |
+      public class Gast {
+          String name;
+          public static void main(String[] args) {
+              System.out.println(name);
+          }
+      }
+    support: ""
+    expect: compile_error
+    error_contains: "non-static variable name cannot be referenced from a static context"
+    answer: "**`main` ist `static` und hat kein Objekt, also kein `this.name`.** Welcher Gast wäre gemeint?"
+    explanation: "Lösung: erst ein Objekt erzeugen und das Attribut über das Objekt ansprechen, z. B. `Gast ada = new Gast(); ada.name = \"Ada\"; System.out.println(ada.name);`."
+    source: "VL 3, Folie 19–20"
+
+  - id: gdp-vl03-020
+    type: cloze
+    text: "`static final int CHECK_IN_AB = 15;`: `static` heißt {{c1::einmal pro Klasse statt in jedem Objekt}}, `final` heißt {{c2::der Wert kann nicht neu zugewiesen werden}}."
+    extra: "Zusammen ist das eine Konstante. Sie wird GROSS_MIT_UNTERSTRICHEN geschrieben und über den Klassennamen benutzt: `Gast.CHECK_IN_AB`, auch aus `main` heraus."
+    source: "VL 3, Folie 20"
+
+  # ---------------------------------------------------------------- Überladen
+  - id: gdp-vl03-021
+    type: cloze
+    text: "Zwei Methoden mit demselben Namen in einer Klasse (**Überladen**) sind erlaubt, wenn sich {{c1::die Parameterliste}} unterscheidet: Anzahl, Typen oder Reihenfolge der Typen. Unterscheidet sich nur {{c2::der Rückgabetyp}}, ist es verboten."
+    extra: "Java wählt beim Aufruf anhand der Argumente. Bekanntes Beispiel: `println(int)` und `println(String)`."
+    source: "VL 3, Folie 21"
+
+  - id: gdp-vl03-022
+    type: code
+    kind: bug
+    prompt: "Warum kompiliert diese Klasse nicht?"
+    code: |
+      public class Rabatt {
+          static double mitRabatt(double preis) {
+              return preis * 0.9;
+          }
+          static int mitRabatt(double preis) {
+              return (int) (preis * 0.9);
+          }
+      }
+    support: ""
+    expect: compile_error
+    error_contains: "already defined"
+    answer: "**Beide Methoden haben dieselbe Signatur `mitRabatt(double)`.** Sie unterscheiden sich nur im Rückgabetyp."
+    explanation: "Beim Aufruf `mitRabatt(100.0)` könnte Java die beiden nicht auseinanderhalten. Erlaubt wäre z. B. `mitRabatt(double preis, int prozent)`."
+    source: "VL 3, Folie 21"
+
+  # ---------------------------------------------------------------- Teil 4: Parameter
+  - id: gdp-vl03-023
+    type: code
+    kind: predict
+    prompt: "Was gibt `main` aus?"
+    code: |
+      static void verfuenffache(int zahl) {
+          zahl = zahl * 5;
+      }
+
+      public static void main(String[] args) {
+          int zahl = 10;
+          verfuenffache(zahl);
+          System.out.println("Zahl: " + zahl);
+      }
+    run: |
+      public class Main {
+      {code}
+      }
+    answer: "Zahl: 10"
+    explanation: "Der Parameter `zahl` ist eine eigene Variable und bekommt eine Kopie der 10. Die Methode ändert nur ihre Kopie. Gleicher Name heißt nicht gleiche Variable."
+    source: "VL 3, Folie 23–24"
+
+  - id: gdp-vl03-024
+    type: basic
+    front: "`verfuenffache(zahl)` soll die Variable `zahl` in `main` wirklich ändern. Wie schreibt man das richtig?"
+    back: "**Mit Rückgabewert:** `static int verfuenffache(int zahl) { return zahl * 5; }` und in `main`: `zahl = verfuenffache(zahl);`"
+    extra: "Die Kopie im Parameter verschwindet mit dem Ende der Methode. Was übrig bleiben soll, muss mit `return` zurück."
+    figure_back: "gdp-vl03-024.png"
+    source: "VL 3, Folie 24"
+
+  - id: gdp-vl03-025
+    type: code
+    kind: predict
+    prompt: "Was gibt `main` aus?"
+    code: |
+      static void anhaengen(Gast g) {
+          g.name = g.name + " Werner";
+      }
+
+      public static void main(String[] args) {
+          Gast tom = new Gast("Tom", 2001);
+          anhaengen(tom);
+          System.out.println(tom.name);
+      }
+    run: |
+      public class Main {
+      {code}
+      }
+    answer: "Tom Werner"
+    explanation: "Kopiert wird der Verweis, nicht das Objekt. `g` und `tom` zeigen auf dasselbe Gast-Objekt, deshalb sieht `main` die Änderung am Attribut."
+    source: "VL 3, Folie 25–26"
+
+  - id: gdp-vl03-026
+    type: basic
+    front: "Erkläre mit einem Speicherbild, warum `anhaengen(tom)` den Namen von `tom` ändern kann, `verfuenffache(zahl)` die Zahl in `main` aber nicht."
+    back: "**Der Parameter `g` bekommt eine Kopie des Verweises: zwei Verweise, ein Objekt.** Bei `int` wird der Wert selbst kopiert."
+    extra: "Das ist dasselbe Bild wie bei `auchAda = ada` (VL 2.2): zwei Variablen, ein Objekt."
+    figure_back: "gdp-vl03-026.png"
+    source: "VL 3, Folie 26"
+
+  - id: gdp-vl03-027
+    type: code
+    kind: predict
+    prompt: "Was gibt `main` aus?"
+    code: |
+      static void ersetze(Gast g) {
+          g = new Gast("Cem", 2000);
+      }
+
+      public static void main(String[] args) {
+          Gast ada = new Gast("Ada", 1998);
+          ersetze(ada);
+          System.out.println(ada.name);
+      }
+    run: |
+      public class Main {
+      {code}
+      }
+    answer: "Ada"
+    explanation: "Die Zuweisung lenkt nur die Kopie des Verweises in `g` um. `ada` zeigt weiter auf Ada. Bei echter Referenzübergabe käme „Cem“ heraus."
+    source: "VL 3, Folie 27"
+
+  - id: gdp-vl03-028
+    type: cloze
+    text: "Java übergibt Parameter immer {{c1::by value}}. Bei Objekten ist dieser Wert {{c2::ein Verweis}}."
+    extra: "Darum sieht der Aufrufer Änderungen an Attributen (Tom Werner), aber keine neue Zuweisung an den Parameter (Ada bleibt Ada). Die verbreitete Antwort „Objekte by reference“ ist falsch."
+    source: "VL 3, Folie 27–28"
